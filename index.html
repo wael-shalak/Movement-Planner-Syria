@@ -19,6 +19,7 @@
   --sea:var(--color-accent-100); --land:var(--color-neutral-200); --syria:var(--color-bg); --border-c:var(--color-neutral-400);
   --f-display:"Barlow Condensed","IBM Plex Sans Arabic",system-ui,sans-serif;
   --f-body:"Barlow","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --danger:oklch(0.55 0.2 27); --danger-ink:oklch(0.42 0.16 27); --danger-soft:oklch(0.95 0.035 27);
   --tint:color-mix(in srgb,var(--color-text) 5%,transparent);
   --nav-h:62px;
 }
@@ -115,7 +116,8 @@ svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .pill::before{content:"";width:6px;height:6px;background:currentColor}
 .st-planned,.st-accepted{background:var(--color-accent-100);color:var(--color-accent-800)}
 .st-completed,.st-covered{background:var(--color-neutral-200);color:var(--color-neutral-800)}
-.st-cancelled,.st-declined,.st-withdrawn{border-color:var(--line);color:var(--color-neutral-600)}
+.st-cancelled{background:var(--danger-soft);color:var(--danger-ink);border-color:color-mix(in srgb,var(--danger) 35%,transparent)}
+.st-declined,.st-withdrawn{border-color:var(--line);color:var(--color-neutral-600)}
 .st-overdue{background:var(--color-accent-900);color:var(--bg)}
 .st-unknown{background:var(--color-neutral-100);color:var(--color-neutral-700);border-color:var(--line)}
 .st-pending,.st-open{background:var(--color-accent-2-100);border-color:var(--color-accent-2-400);color:var(--color-accent-2-800)}
@@ -249,6 +251,12 @@ td.wrapcell{white-space:normal;max-width:280px;color:var(--muted);font-size:13px
 .notify-g{font-family:var(--f-display);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:12px 16px 4px;display:flex;gap:6px}
 .notify-item{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 10px;padding:10px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent);align-items:start}
 .notify-item .n-ic{width:28px;height:28px;display:grid;place-items:center;background:var(--color-accent-100);color:var(--color-accent-800)}
+.notify-item.n-cancel{background:var(--danger-soft)}
+.notify-item.n-cancel .n-ic{background:var(--danger);color:#fff}
+.notify-item.n-cancel .n-txt b.cx{color:var(--danger-ink)}
+.notify-g.g-cancel{color:var(--danger-ink)}
+.notify.has-cancel .notify-head{border-top-color:var(--danger)}
+.toast.danger{background:var(--danger)}
 .notify-item.n-overdue .n-ic,.notify-item.n-reimb .n-ic{background:var(--color-accent-2-100);color:var(--color-accent-2-800)}
 .notify-item.n-req .n-ic,.notify-item.n-need .n-ic,.notify-item.n-myneed .n-ic{background:var(--color-accent);color:var(--bg)}
 .notify-item .n-ic .i{width:16px;height:16px}
@@ -482,7 +490,7 @@ const I18N = {
   nTitle:"Needs your attention",nAllClear:"All clear — nothing needs you right now.",nGotIt:"Got it",nOpen:"Open",nReview:"Review",nRequestSeat:"Request seat",
   nReq:"wants {n} seat(s) on your trip",nOverdue:"Trip date has passed — close it",nAccepted:"accepted your request",nDeclined:"declined your request",
   nSoon:"Coming up",nToday:"today",nTomorrow:"tomorrow",nNeedMatch:"needs {n} seat(s) — your trip has room",nMyNeed:"A trip now matches your ride need",
-  nReimb:"Reimbursement still pending",nNew:"New",notifications:"Notifications",nG_action:"To do",nG_info:"Updates",dropAt:"Drop-off point",dropEnd:"Final destination",onRoute:"On the way",otherPl:"Other places (detour)",dropTo:"drop-off at",stops:"Drop-off stops",detourNote:"Not on the direct route, the lead agency will confirm.",
+  nReimb:"Reimbursement still pending",nCancelled:"cancelled this trip",nG_cancel:"Cancelled trips",nYouWere:"You had {n} seat(s) on it",nYourReq:"Your seat request was on it",nFindOther:"Find another trip",nNew:"New",notifications:"Notifications",nG_action:"To do",nG_info:"Updates",dropAt:"Drop-off point",dropEnd:"Final destination",onRoute:"On the way",otherPl:"Other places (detour)",dropTo:"drop-off at",stops:"Drop-off stops",detourNote:"Not on the direct route, the lead agency will confirm.",
   needTitle:"Post a ride need",needSub:"Tell other agencies you need seats. Trip leads on this route will see it.",flex:"Flexible by",days:"days",postNeedBtn:"Post need",
   incoming:"Requests for your trips",mine:"Your agency's requests",needs:"Open ride needs",
   accept:"Accept",decline:"Decline",withdraw:"Withdraw",markCovered:"Mark covered",
@@ -541,7 +549,7 @@ const I18N = {
   nTitle:"بحاجة لانتباهك",nAllClear:"لا يوجد ما يحتاجك الآن.",nGotIt:"حسناً",nOpen:"فتح",nReview:"مراجعة",nRequestSeat:"اطلب مقعداً",
   nReq:"تطلب {n} مقعد/مقاعد في رحلتك",nOverdue:"انتهى موعد الرحلة — أغلقها",nAccepted:"قبلت طلبك",nDeclined:"رفضت طلبك",
   nSoon:"قريباً",nToday:"اليوم",nTomorrow:"غداً",nNeedMatch:"تحتاج {n} مقعد/مقاعد — في رحلتك مكان",nMyNeed:"رحلة تطابق حاجتك للتنقل",
-  nReimb:"التسديد ما زال معلقاً",nNew:"جديد",notifications:"الإشعارات",nG_action:"مهام",nG_info:"تحديثات",dropAt:"نقطة النزول",dropEnd:"الوجهة النهائية",onRoute:"على الطريق",otherPl:"أماكن أخرى (تحويلة)",dropTo:"النزول في",stops:"نقاط النزول",detourNote:"ليست على الطريق المباشر، ستؤكد المنظمة المسؤولة.",send:"أرسل الطلب",
+  nReimb:"التسديد ما زال معلقاً",nCancelled:"ألغت هذه الرحلة",nG_cancel:"رحلات ملغاة",nYouWere:"كان لديك {n} مقعد/مقاعد فيها",nYourReq:"كان طلب مقعدك عليها",nFindOther:"ابحث عن رحلة أخرى",nNew:"جديد",notifications:"الإشعارات",nG_action:"مهام",nG_info:"تحديثات",dropAt:"نقطة النزول",dropEnd:"الوجهة النهائية",onRoute:"على الطريق",otherPl:"أماكن أخرى (تحويلة)",dropTo:"النزول في",stops:"نقاط النزول",detourNote:"ليست على الطريق المباشر، ستؤكد المنظمة المسؤولة.",send:"أرسل الطلب",
   needTitle:"انشر حاجة لرحلة",needSub:"أخبر المنظمات الأخرى أنك تحتاج مقاعد. ستراها المنظمات التي تسير على هذا المسار.",flex:"مرونة",days:"أيام",postNeedBtn:"انشر",
   incoming:"طلبات على رحلات منظمتك",mine:"طلبات منظمتك",needs:"احتياجات مفتوحة",
   accept:"قبول",decline:"رفض",withdraw:"سحب",markCovered:"تمت التغطية",
@@ -607,7 +615,7 @@ function rate(a,b,veh){
   return r[v.rate] ?? null;
 }
 function paxCounts(tr){ const m={}; (tr.pax||[]).forEach(a=>m[a]=(m[a]||0)+1); return m; }
-function toast(msg){ const el=document.createElement("div"); el.className="toast"; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),2600); }
+function toast(msg,kind){ const el=document.createElement("div"); el.className="toast"+(kind?" "+kind:""); el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),2600); }
 
 /* ---------- state ---------- */
 const S = {
@@ -667,7 +675,7 @@ function render(){
   const v=$("#view");
   if(!S.ready && S.dbOk){ v.innerHTML=`<div class="panel empty"><b>${esc(t("loading"))}</b></div>`; return; }
   if(S.tab==="admin"&&!S.admin) S.tab="map";
-  renderBell(); if(S.notifyOpen) renderNotify();
+  renderBell(); if(S.notifyOpen) renderNotify(); checkCancels();
   (({map:renderMap,trips:renderRegister,requests:renderRequests,agencies:renderAgencies,dash:renderDash,admin:renderAdmin})[S.tab]||renderMap)();
 }
 
@@ -904,6 +912,7 @@ function applyView(){
 document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-view]"); if(!b) return; VIEW=b.dataset.view; try{ localStorage.setItem("mp-view",VIEW); }catch(e){} applyView(); if(S.user) render(); });
 applyView();
 
+const statusUpd = s => s==="cancelled" ? {status:s,cancelledAt:new Date().toISOString(),cancelledBy:S.user} : {status:s};
 /* ---------- NOTIFICATIONS ---------- */
 const seenKey=()=>"mp-seen-"+(S.email||S.user||"");
 const getSeen=()=>{ try{ return localStorage.getItem(seenKey())||""; }catch(e){ return ""; } };
@@ -911,6 +920,12 @@ function notices(){
   const me=S.myAgency, out=[], seen=getSeen(), tom=addDays(TODAY,1);
   const mine=tr=>tr.lead===me;
   const rt=tr=>`${esc(cityName(tr.from))} <span class="arrow">→</span> ${esc(cityName(tr.to))} · <span class="num">${esc(fmtDate(tr.date,{day:"numeric",month:"short"}))}</span>`;
+  [...S.trips.values()].filter(tr=>tr.status==="cancelled"&&tr.cancelledAt&&tr.cancelledAt>seen&&tr.date>=addDays(TODAY,-1)&&tr.lead!==me).forEach(tr=>{
+    const seats=(tr.pax||[]).filter(a=>a===me).length;
+    const req=[...S.requests.values()].find(r=>r.tripId===tr.id&&r.agency===me&&(r.status==="pending"||r.status==="accepted"));
+    if(!S.admin&&!seats&&!req) return;
+    out.push({g:"cancel",k:"cancel",id:tr.id,ord:-1,html:`${agChip(tr.cancelledBy&&tr.cancelledBy!=="admin"?tr.cancelledBy:tr.lead)} <b class="cx">${esc(t("nCancelled"))}</b><div class="small muted">${rt(tr)}${tr.time?" · "+esc(tr.time):""}</div>${seats?`<div class="small">${esc(t("nYouWere").replace("{n}",seats))}</div>`:req?`<div class="small">${esc(t("nYourReq"))}</div>`:""}`,
+      acts:`${!S.admin?`<button class="btn small" data-act="n-findother" data-from="${esc(tr.from)}" data-to="${esc(tr.to)}">${esc(t("nFindOther"))}</button>`:""}<button class="btn small ghost" data-act="n-trip" data-id="${esc(tr.id)}">${esc(t("nOpen"))}</button>`}); });
   incomingRequests().filter(r=>r.status==="pending").forEach(r=>{ const tr=S.trips.get(r.tripId); if(!tr) return;
     out.push({g:"action",k:"req",ord:0,html:`${agChip(r.agency)} ${esc(t("nReq").replace("{n}",r.seats))}${r.dropoff&&r.dropoff!==tr.to?` (${esc(t("dropTo"))} ${esc(cityName(r.dropoff))})`:""}<div class="small muted">${rt(tr)}</div>`,
       acts:`<button class="btn small primary" data-act="accept" data-id="${esc(r.id)}">${esc(t("accept"))}</button><button class="btn small" data-act="decline" data-id="${esc(r.id)}">${esc(t("decline"))}</button>`}); });
@@ -936,21 +951,29 @@ function notices(){
       acts:`<button class="btn small" data-act="n-trip" data-id="${esc(tr.id)}">${esc(t("nOpen"))}</button>`}); });
   return out.sort((a,b)=>a.ord-b.ord);
 }
-const N_ICON={req:ICONS.requests,overdue:ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),need:ICONS.search,myneed:ICONS.search,accepted:ic('<path d="M20 6 9 17l-5-5"/>'),declined:ic('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),soon:ICONS.trips,reimb:ic('<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>')};
+const N_ICON={cancel:ic('<circle cx="12" cy="12" r="9"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>'),req:ICONS.requests,overdue:ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),need:ICONS.search,myneed:ICONS.search,accepted:ic('<path d="M20 6 9 17l-5-5"/>'),declined:ic('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),soon:ICONS.trips,reimb:ic('<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>')};
 function renderBell(){
   const b=$("#bell"); if(!b) return; if(!S.user){ b.hidden=true; return; }
-  const n=notices().filter(x=>x.g==="action"||x.k==="accepted"||x.k==="declined").length;
+  const n=notices().filter(x=>x.g==="action"||x.g==="cancel"||x.k==="accepted"||x.k==="declined").length;
   b.hidden=false; b.setAttribute("aria-label",t("notifications"));
   b.innerHTML=`${ic('<path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>')}${n?`<span class="badge">${n}</span>`:""}`;
 }
 function renderNotify(){
   const root=$("#notify-root"); if(!root) return;
   if(!S.notifyOpen||!S.user){ root.innerHTML=""; return; }
-  const list=notices(); const groups=[["action",list.filter(x=>x.g==="action")],["info",list.filter(x=>x.g==="info")]].filter(g=>g[1].length);
-  root.innerHTML=`<div class="notify" role="dialog" aria-label="${esc(t("nTitle"))}">
+  const list=notices(); const groups=[["cancel",list.filter(x=>x.g==="cancel")],["action",list.filter(x=>x.g==="action")],["info",list.filter(x=>x.g==="info")]].filter(g=>g[1].length);
+  root.innerHTML=`<div class="notify${list.some(x=>x.g==="cancel")?" has-cancel":""}" role="dialog" aria-label="${esc(t("nTitle"))}">
     <div class="notify-head"><div><h2>${esc(t("nTitle"))}</h2><span class="small muted">${esc(S.user)} · ${esc(fmtDate(TODAY,{weekday:"long",day:"numeric",month:"long"}))}</span></div><button class="btn ghost small" data-act="n-close" aria-label="${esc(t("close"))}">✕</button></div>
-    <div class="notify-body">${groups.length?groups.map(([g,items])=>`<div class="notify-g">${esc(t("nG_"+g))} <span class="num">${items.length}</span></div>${items.map(x=>`<div class="notify-item n-${x.k}"><span class="n-ic">${N_ICON[x.k]||""}</span><div class="n-txt">${x.html}</div><div class="row-actions n-acts">${x.acts}</div></div>`).join("")}`).join(""):`<div class="empty"><b>${esc(t("nAllClear"))}</b></div>`}</div>
+    <div class="notify-body">${groups.length?groups.map(([g,items])=>`<div class="notify-g g-${g}">${esc(t("nG_"+g))} <span class="num">${items.length}</span></div>${items.map(x=>`<div class="notify-item n-${x.k}"><span class="n-ic">${N_ICON[x.k]||""}</span><div class="n-txt">${x.html}</div><div class="row-actions n-acts">${x.acts}</div></div>`).join("")}`).join(""):`<div class="empty"><b>${esc(t("nAllClear"))}</b></div>`}</div>
     <div class="notify-foot"><button class="btn primary" data-act="n-close">${esc(t("nGotIt"))}</button></div></div>`;
+}
+let knownCancels=null;
+function checkCancels(){
+  if(!S.ready||!S.user) return;
+  const ids=notices().filter(x=>x.g==="cancel").map(x=>x.id);
+  if(knownCancels===null){ knownCancels=new Set(ids); return; }
+  const fresh=ids.filter(i=>!knownCancels.has(i)); ids.forEach(i=>knownCancels.add(i));
+  if(fresh.length){ S.notifyOpen=true; renderNotify(); renderBell(); const tr=S.trips.get(fresh[0]); if(tr) toast(cityName(tr.from)+" → "+cityName(tr.to)+": "+t("cancelled"),"danger"); }
 }
 function closeNotify(){ S.notifyOpen=false; try{ localStorage.setItem(seenKey(), new Date().toISOString()); }catch(e){} renderNotify(); renderBell(); }
 function maybeNotify(){ if(S.notifiedFor===S.user) return; S.notifiedFor=S.user; setTimeout(()=>{ if(!S.user) return; if(notices().length){ S.notifyOpen=true; renderNotify(); } },700); }
@@ -1168,7 +1191,7 @@ async function saveTrip(id){
   if(!data.lead) return show(t("chooseAgency"));
   if(data.pax.length>data.seats) data.seats=data.pax.length;
   try{
-    if(id){ data.status=g("#f-status"); await db.doc("trips/"+id).update(data); }
+    if(id){ data.status=g("#f-status"); if(data.status==="cancelled"&&S.trips.get(id)?.status!=="cancelled") Object.assign(data,statusUpd("cancelled")); await db.doc("trips/"+id).update(data); }
     else{
       data.status="planned"; data.by=S.user; data.at=new Date().toISOString();
       await db.collection("trips").add(data);
@@ -1359,7 +1382,7 @@ document.addEventListener("click",async ev=>{
     case "use-rate": $("#f-cost").value=el.dataset.v; break;
     case "save-trip": el.disabled=true; await saveTrip(el.dataset.id); el.disabled=false; break;
     case "edit-trip": tripForm(el.dataset.id); break;
-    case "set-status": try{ await db.doc("trips/"+el.dataset.id).update({status:el.dataset.s}); toast(t("saved")); tripDetail(el.dataset.id);}catch(e){toast(writeErr(e));} break;
+    case "set-status": try{ await db.doc("trips/"+el.dataset.id).update(statusUpd(el.dataset.s)); toast(t("saved")); tripDetail(el.dataset.id);}catch(e){toast(writeErr(e));} break;
     case "req-seat": seatRequestForm(el.dataset.id); break;
     case "send-req": el.disabled=true; await sendRequest(el.dataset.id); el.disabled=false; break;
     case "accept": el.disabled=true; await decide(el.dataset.id,true); break;
@@ -1376,8 +1399,9 @@ document.addEventListener("click",async ev=>{
     case "notify": S.notifyOpen=!S.notifyOpen; if(S.notifyOpen) renderNotify(); else closeNotify(); break;
     case "n-close": closeNotify(); break;
     case "n-trip": tripDetail(el.dataset.id); break;
+    case "n-findother": closeNotify(); S.tab="map"; S.map.range="upcoming"; S.map.city=""; S.map.route=pairKey(el.dataset.from,el.dataset.to); render(); break;
     case "n-reqseat": seatRequestForm(el.dataset.id); break;
-    case "n-status": el.disabled=true; try{ await db.doc("trips/"+el.dataset.id).update({status:el.dataset.s}); toast(t("saved")); }catch(e){toast(writeErr(e));} break;
+    case "n-status": el.disabled=true; try{ await db.doc("trips/"+el.dataset.id).update(statusUpd(el.dataset.s)); toast(t("saved")); }catch(e){toast(writeErr(e));} break;
     case "edit-place": placeForm(el.dataset.id); break;
     case "save-place": el.disabled=true; await savePlace(el.dataset.id); el.disabled=false; break;
     case "del-place": { if(!(await confirmFirst(el))) break; const c=el.dataset.id, next={...(S.places||{})}; if(BASE_CITIES[c]) next[c]={...(next[c]||{}),hidden:true}; else delete next[c]; try{ await savePlaces(next); toast(t("saved")); }catch(e){toast(writeErr(e));} break; }
@@ -1478,7 +1502,7 @@ async function forgotPw(){
   renderLogin({ok:true,text:t("resetSent")});
 }
 function logout(){ S.notifyOpen=false; S.notifiedFor=null; renderNotify(); if(auth) auth.signOut(); }
-function stopData(){ unsubs.forEach(f=>{ try{f();}catch(e){} }); unsubs=[]; [S.trips,S.requests,S.needs,S.agencies].forEach(m=>m.clear()); }
+function stopData(){ knownCancels=null; unsubs.forEach(f=>{ try{f();}catch(e){} }); unsubs=[]; [S.trips,S.requests,S.needs,S.agencies].forEach(m=>m.clear()); }
 async function onUser(u){
   stopData(); loginBusy=false;
   if(!u){ S.user=null; S.email=null; S.admin=false; S.myAgency=""; showLogin(null); return; }
