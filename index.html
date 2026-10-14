@@ -1,0 +1,1538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="author" content="Wael Shalak">
+<meta name="copyright" content="© 2026 Wael Shalak. All rights reserved.">
+<meta name="generator" content="Movement Planner v1.1 by Wael Shalak">
+<!-- Movement Planner v1.1 — designed and built by Wael Shalak, October 2026. -->
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Syria Movement Planner</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:var(--color-bg); --surface:var(--color-bg); --surface-2:var(--color-surface); --ink:var(--color-text); --muted:var(--color-neutral-700); --line:var(--color-divider);
+  --accent:var(--color-accent-600); --accent-ink:var(--color-accent-700); --accent-soft:var(--color-accent-100); --on-accent:var(--color-bg);
+  --seat:var(--color-accent-2-700); --seat-soft:var(--color-accent-2-100); --ok:var(--color-accent-800); --bad:var(--color-neutral-400); --warn:var(--color-text); --idle:var(--color-neutral-500);
+  --arc-seat:var(--color-accent-2-500); --arc-plan:var(--color-accent-400); --arc-done:var(--color-neutral-400);
+  --sea:var(--color-accent-100); --land:var(--color-neutral-200); --syria:var(--color-bg); --border-c:var(--color-neutral-400);
+  --f-display:"Barlow Condensed","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"Barlow","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --tint:color-mix(in srgb,var(--color-text) 5%,transparent);
+  --nav-h:62px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.45;padding:0 20px 40px;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+a{color:var(--accent-ink)} a:hover{color:var(--color-accent-800)}
+.mono,.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+.wrap{max-width:1440px;margin-inline:auto}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* header */
+.top{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;padding:14px 0 12px;position:sticky;top:0;z-index:10;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{width:38px;height:38px;background:var(--color-accent);display:grid;place-items:center;flex:none;border:0!important}
+.brand-mark svg{display:block}
+.brand h1{font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.top-right{margin-inline-start:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.who{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:3px 3px 3px 12px;min-height:40px}
+[dir="rtl"] .who{padding:3px 12px 3px 3px}
+.who .lbl{font-size:13px;color:var(--muted);white-space:nowrap}
+.who-id{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.who-name{font-size:12px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who-mail{font-size:11px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who b{font-family:var(--f-display);font-size:16px;letter-spacing:.04em}
+.role{font-family:var(--f-display);font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:var(--accent-soft);color:var(--color-accent-800);padding:2px 8px}
+.lang{display:flex;border:1px solid var(--line)}
+.lang button{border:0;background:none;padding:0 14px;min-height:38px;cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:14px;color:var(--muted)}
+.lang button+button{border-inline-start:1px solid var(--line)}
+.lang button:hover{background:var(--tint)}
+.lang button[aria-pressed="true"]{background:var(--color-text);color:var(--bg)}
+
+/* login */
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding-block:32px}
+.login{width:min(460px,100%);padding:28px;display:flex;flex-direction:column;gap:16px}
+.login h1{font-size:24px}
+.login h2{font-size:28px!important;text-transform:uppercase}
+.login .lede{color:var(--muted);margin:0}
+.demo{border-top:1px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.sample{font-family:var(--f-display);font-size:11px;font-weight:600;color:var(--color-accent-800);border:1px solid var(--color-accent-400);padding:0 6px;text-transform:uppercase;letter-spacing:.08em}
+
+/* tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px;align-items:stretch;position:sticky;top:66px;z-index:9;background:var(--bg)}
+.tab{border:0;background:none;padding:12px 14px;cursor:pointer;color:var(--muted);font-family:var(--f-display);font-weight:600;font-size:16px;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;align-items:center;gap:8px;position:relative}
+.tab:hover{color:var(--ink);background:var(--tint)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--color-accent)}
+.badge{min-width:20px;height:20px;padding:0 6px;background:var(--color-accent-2-600);color:var(--bg);font-family:var(--f-body);font-size:12px;font-weight:500;display:inline-grid;place-items:center;letter-spacing:0}
+.tab-actions{margin-inline-start:auto;display:flex;gap:10px;align-items:center;padding:6px 0}
+.fab{display:none}
+.credit{margin-top:40px;padding-top:12px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:11px;letter-spacing:.06em;color:var(--color-neutral-500)}
+.viewsw{display:flex;border:1px solid var(--line)}
+.viewsw button{border:0;background:none;padding:0 12px;min-height:30px;cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.viewsw button+button{border-inline-start:1px solid var(--line)}
+.viewsw button:hover{background:var(--tint)}
+.viewsw button[aria-pressed="true"]{background:var(--color-text);color:var(--bg)}
+@media (min-width:520px){
+  html.v-phone{background:var(--color-neutral-200)}
+  html.v-phone body{max-width:430px;margin-inline:auto;min-height:100vh;box-shadow:var(--shadow-lg);background:var(--bg)}
+  html.v-phone .tabs,html.v-phone .fab,html.v-phone .notify{left:calc(50% - 215px + 8px)!important;right:calc(50% - 215px + 8px)!important;inset-inline:auto}
+  html.v-phone .tabs{left:calc(50% - 215px)!important;right:calc(50% - 215px)!important}
+  html.v-phone .overlay{justify-content:center}
+  html.v-phone .sheet{width:430px}
+}
+.map-svg .truck{pointer-events:none;transition:opacity .5s}
+.map-svg .truck path,.map-svg .truck circle{fill:var(--bg);stroke:var(--color-accent-900);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* buttons */
+.btn{min-height:40px;font-size:15px;white-space:nowrap;background:transparent;border:1px solid var(--line);color:var(--ink);padding:6px 14px}
+.btn:hover{background:var(--tint)}
+.btn:active{background:color-mix(in srgb,var(--color-text) 12%,transparent)}
+.btn.primary{background:var(--color-accent);border-color:var(--color-accent);color:var(--bg)}
+.btn.primary:hover{background:var(--color-accent-600)}
+.btn.primary:active{background:var(--color-accent-700)}
+.btn.seat{background:var(--color-accent-2-600);border-color:var(--color-accent-2-600);color:var(--bg);min-height:46px;font-size:16px}
+.btn.seat:hover{background:var(--color-accent-2-700)}
+.btn.ghost{border-color:transparent;color:var(--accent-ink)}
+.btn.ghost:hover{background:color-mix(in srgb,var(--color-accent) 10%,transparent)}
+.btn.small{min-height:32px;padding:3px 10px;font-size:14px}
+.btn.danger{color:var(--color-neutral-800);text-decoration:underline;text-decoration-color:var(--color-neutral-400);text-underline-offset:3px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn .i{width:17px;height:17px}
+
+/* chips & pills */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;padding:0 12px;min-height:34px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;font-weight:500;white-space:nowrap;flex:none}
+.chip:hover{background:var(--tint)}
+.chip[aria-pressed="true"]{background:var(--color-accent-700);color:var(--bg);border-color:var(--color-accent-700)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;font-family:var(--f-display);font-size:13px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;border:1px solid transparent}
+.pill::before{content:"";width:6px;height:6px;background:currentColor}
+.st-planned,.st-accepted{background:var(--color-accent-100);color:var(--color-accent-800)}
+.st-completed,.st-covered{background:var(--color-neutral-200);color:var(--color-neutral-800)}
+.st-cancelled,.st-declined,.st-withdrawn{border-color:var(--line);color:var(--color-neutral-600)}
+.st-overdue{background:var(--color-accent-900);color:var(--bg)}
+.st-unknown{background:var(--color-neutral-100);color:var(--color-neutral-700);border-color:var(--line)}
+.st-pending,.st-open{background:var(--color-accent-2-100);border-color:var(--color-accent-2-400);color:var(--color-accent-2-800)}
+.ag{font-family:var(--f-display);font-size:13px;font-weight:600;letter-spacing:.05em;padding:0 6px;border:1px solid var(--line);white-space:nowrap;line-height:20px;display:inline-block}
+.ag.me{background:var(--color-text);color:var(--bg);border-color:var(--color-text)}
+
+/* steps strip */
+.hint{list-style:none;margin:0 0 18px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line)}
+.hint li{display:flex;align-items:center;gap:12px;padding:12px 16px;color:var(--muted);font-size:14px}
+.hint li+li{border-inline-start:1px solid var(--line)}
+.hint b{font-family:var(--f-display);font-size:28px;line-height:1;color:var(--color-accent-2-600)}
+
+/* map tab */
+.map-bar{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.map-bar select,.filters input,.filters select,.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--color-surface);border-radius:0;padding:6px 10px;min-height:38px;min-width:0}
+.map-bar select:hover,.filters input:hover,.filters select:hover,.field input:hover,.field select:hover,.field textarea:hover{border-color:color-mix(in srgb,var(--color-text) 45%,transparent)}
+.map-bar select:focus-visible,.filters input:focus-visible,.filters select:focus-visible,.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{border-color:var(--color-accent);outline-offset:0}
+input[type="checkbox"]{accent-color:var(--color-accent-700);width:18px;height:18px;margin:0}
+.mview{display:none}
+.map-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(340px,1fr);gap:20px;align-items:start}
+.panel{background:transparent;border:1px solid var(--line);min-width:0}
+.map-panel{position:relative}
+.map-svg{display:block;width:100%;height:auto;background:var(--sea);direction:ltr}
+.map-svg .c-other{fill:var(--land);stroke:var(--border-c);stroke-width:.6}
+.map-svg .c-syr{fill:var(--syria);stroke:var(--ink);stroke-width:1.2;stroke-opacity:.55}
+.map-svg .cname{font-family:var(--f-display);font-size:14px;fill:var(--color-neutral-600);letter-spacing:.2em;text-transform:uppercase;pointer-events:none}
+.map-svg .arc{fill:none;stroke-linecap:butt;cursor:pointer;transition:opacity .15s}
+.map-svg .arc.dim{opacity:.15}
+.map-svg .arc-hit{fill:none;stroke:transparent;stroke-width:18;cursor:pointer}
+.map-svg .city circle{fill:var(--bg);stroke:var(--ink);stroke-width:1.6;cursor:pointer}
+.map-svg .city.hub circle{fill:var(--ink)}
+.map-svg .city.sel circle{fill:var(--color-accent);stroke:var(--color-accent-800)}
+.map-svg .city text{font-family:var(--f-body);font-size:13px;font-weight:500;fill:var(--ink);paint-order:stroke;stroke:var(--syria);stroke-width:3.5px;stroke-linejoin:round;cursor:pointer}
+.map-svg .city text.sub{font-size:10px;font-weight:400;fill:var(--muted)}
+.legend{display:flex;gap:8px 16px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:20px;height:4px;display:inline-block}
+.map-note{position:absolute;inset-inline-start:12px;top:12px;background:var(--bg);border:1px solid var(--line);padding:4px 4px 4px 12px;font-size:13px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-md)}
+
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.list-head h2{font-size:20px;text-transform:uppercase;letter-spacing:.02em}
+.list-head .sub{color:var(--muted);font-size:13px}
+.trip-list{max-height:680px;overflow:auto}
+.trip{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;padding:12px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 9%,transparent);cursor:pointer;align-items:center}
+.trip:last-child{border-bottom:0}
+.trip:hover{background:var(--tint)}
+.trip .d{text-align:center;line-height:1;border-inline-end:1px solid var(--line);padding-inline-end:10px}
+.trip .d b{display:block;font-family:var(--f-display);font-size:26px;font-weight:600}
+.trip .d small{font-family:var(--f-display);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.trip .route{font-weight:500;font-size:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.trip .meta{color:var(--muted);font-size:13px;display:flex;gap:6px 8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.trip .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.seatbar{display:inline-flex;gap:2px;vertical-align:middle}
+.seatbar i{width:7px;height:12px;background:var(--ink)}
+.seatbar i.free{background:none;border:1.5px solid var(--seat)}
+.arrow{color:var(--muted)}
+[dir="rtl"] .arrow{display:inline-block;transform:scaleX(-1)}
+.empty{padding:32px 18px;color:var(--muted);text-align:center}
+.empty b{display:block;color:var(--ink);font-family:var(--f-display);font-size:18px;margin-bottom:4px}
+.alert{border:1px solid var(--line);padding:10px 12px;background:var(--color-neutral-100);font-size:14px}
+.alert.warn{border-color:var(--color-neutral-500)}
+.alert.seat{background:var(--color-accent-2-100);border-color:var(--color-accent-2-300)}
+
+/* register */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px;border-bottom:1px solid var(--line)}
+.filters input[type="search"]{flex:1 1 220px}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:var(--f-display);font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;text-align:start;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--bg);position:sticky;top:0}
+td{padding:9px 10px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent);vertical-align:middle;white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--tint)}
+td.wrapcell{white-space:normal;max-width:280px;color:var(--muted);font-size:13px}
+.more{padding:12px;text-align:center}
+
+/* requests */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px;align-items:start}
+.card-row{padding:14px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 9%,transparent);display:flex;flex-direction:column;gap:8px}
+.card-row:last-of-type{border-bottom:0}
+.row-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* agencies */
+.ag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:20px}
+.ag-card{padding:16px;display:flex;flex-direction:column;gap:12px}
+.ag-card h3{font-size:19px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.contact{display:grid;gap:2px;font-size:14px;padding-top:10px;border-top:1px dashed var(--line)}
+.contact b{font-weight:500}
+.contact .k{font-family:var(--f-display);color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.copy{border:0;background:none;padding:4px 6px;cursor:pointer;color:var(--accent-ink);font-size:12px;font-weight:500;text-decoration:underline;text-underline-offset:2px}
+.areas{display:flex;gap:4px;flex-wrap:wrap}
+.area{font-size:12px;padding:1px 7px;background:var(--color-accent-100);color:var(--color-accent-800)}
+
+/* dashboard */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px}
+.kpi{padding:16px}
+.kpi .v{font-family:var(--f-display);font-size:36px;font-weight:600;line-height:1}
+.kpi .l{color:var(--muted);font-size:13px;margin-top:6px}
+.kpi.alertk .v{color:var(--color-accent-2-700)}
+.chart{padding:16px}
+.chart h3{font-size:18px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.02em}
+.hbar{display:grid;grid-template-columns:110px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:13px;margin-bottom:8px}
+.hbar .track{height:14px;background:var(--color-neutral-200);display:flex}
+.hbar .fill{height:100%;background:var(--color-accent-600)}
+.hbar .fill.b{background:var(--color-accent-2-300)}
+.hbar .n{text-align:end}
+.months{display:flex;align-items:flex-end;gap:4px;height:180px;padding-top:6px;border-bottom:1px solid var(--line)}
+.mcol{flex:1;display:flex;flex-direction:column-reverse;min-width:0;height:100%}
+.mcol .seg{display:block;width:100%;border:0;overflow:visible}
+.mcol .seg.c{background:var(--color-accent-800)}
+.mcol .seg.p{background:var(--color-accent-300)}
+.mcol .seg.x{background:var(--color-neutral-400)}
+.mlabels{display:flex;gap:4px;font-size:11px;color:var(--muted);margin-top:4px}
+.mlabels span{flex:1;text-align:center;min-width:0;overflow:hidden}
+.mini-legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.mini-legend i{display:inline-block;width:10px;height:10px;margin-inline-end:5px;vertical-align:-1px}
+
+/* notifications */
+.bell{position:relative;width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);background:none;cursor:pointer;color:var(--ink)}
+.bell:hover{background:var(--tint)}
+.bell .i{width:20px;height:20px}
+.bell .badge{position:absolute;top:-7px;inset-inline-end:-7px}
+#notify-root{position:relative;z-index:35}
+.notify{position:fixed;inset-inline-end:20px;bottom:20px;width:min(440px,calc(100vw - 40px));max-height:min(640px,calc(100vh - 120px));display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);box-shadow:var(--shadow-lg);animation:nIn .28s ease-out}
+@keyframes nIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.notify-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);border-top:4px solid var(--color-accent-2-500)}
+.notify-head h2{font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.notify-body{overflow:auto;flex:1}
+.notify-g{font-family:var(--f-display);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:12px 16px 4px;display:flex;gap:6px}
+.notify-item{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 10px;padding:10px 16px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 8%,transparent);align-items:start}
+.notify-item .n-ic{width:28px;height:28px;display:grid;place-items:center;background:var(--color-accent-100);color:var(--color-accent-800)}
+.notify-item.n-overdue .n-ic,.notify-item.n-reimb .n-ic{background:var(--color-accent-2-100);color:var(--color-accent-2-800)}
+.notify-item.n-req .n-ic,.notify-item.n-need .n-ic,.notify-item.n-myneed .n-ic{background:var(--color-accent);color:var(--bg)}
+.notify-item .n-ic .i{width:16px;height:16px}
+.n-txt{font-size:14px;line-height:1.4;display:flex;flex-direction:column;gap:3px}
+.n-txt > .small{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.n-acts{grid-column:2}
+.notify-foot{padding:10px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end}
+@media (max-width:760px){
+  .bell{width:40px;height:40px}
+  .notify{inset-inline:8px;width:auto;bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - var(--nav-h) - 80px)}
+  .notify .btn.small{min-height:38px}
+}
+/* admin */
+.admin-places{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:start}
+.admin-mini{border-inline-end:1px solid var(--line);position:sticky;top:130px}
+.admin-mini .city text,.pick-wrap .city text{pointer-events:none}
+.admin-plist{max-height:640px;overflow:auto}
+.pick-wrap{border:1px solid var(--line)}
+.pick-map{cursor:crosshair}
+.pick-map .city circle{cursor:crosshair}
+.admin-t tbody tr{cursor:pointer}
+.admin-t .row-actions{flex-wrap:nowrap}
+@media (max-width:900px){ .admin-places{grid-template-columns:minmax(0,1fr)} .admin-mini{position:static;border-inline-end:0;border-bottom:1px solid var(--line)} .admin-plist{max-height:none} }
+/* sheets */
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--color-neutral-900) 50%,transparent);display:flex;justify-content:flex-end;z-index:40}
+.sheet{background:var(--bg);width:min(580px,100%);height:100%;overflow:auto;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;border-inline-start:1px solid var(--line)}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2;padding-top:calc(16px + env(safe-area-inset-top,0px))}
+.sheet-head h2{font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.sheet-head .btn{min-width:40px}
+.sheet-body{padding:18px 20px;display:flex;flex-direction:column;gap:16px;flex:1}
+.sheet-foot{padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg);flex-wrap:wrap;z-index:2}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label,.field .lbl{font-size:13px;font-weight:500;color:var(--muted);margin:0}
+.field input,.field select,.field textarea{width:100%}
+.field textarea{min-height:70px;resize:vertical}
+.check{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer;min-height:34px}
+.kv{display:grid;grid-template-columns:140px minmax(0,1fr);gap:10px 14px;font-size:14px;margin:0;border-top:1px solid var(--line);padding-top:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.kv dt::first-letter{text-transform:uppercase}
+.big-route{font-family:var(--f-display);font-size:30px;font-weight:600;line-height:1.05;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.split{width:100%;font-size:13px}
+.split td,.split th{position:static;padding:6px 8px}
+.paxrow{display:grid;grid-template-columns:minmax(0,1fr) 84px auto;gap:8px;align-items:center}
+.estimate{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;border:1px dashed var(--color-accent-400);padding:10px 12px}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;font-weight:500;z-index:60;box-shadow:var(--shadow-lg);max-width:calc(100% - 32px)}
+.banner{border:1px dashed var(--color-neutral-500);padding:8px 14px;margin-bottom:18px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+@media (max-width:1000px){
+  .map-layout{grid-template-columns:minmax(0,1fr)}
+  .trip-list{max-height:none}
+  .mview{display:none;border:1px solid var(--line);margin-bottom:14px}
+  .mview button{flex:1;border:0;background:none;min-height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--f-display);font-weight:600;font-size:16px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .mview button+button{border-inline-start:1px solid var(--line)}
+  .mview button[aria-pressed="true"]{background:var(--color-text);color:var(--bg)}
+}
+@media (max-width:760px){
+  body{padding:0 14px calc(var(--nav-h) + 92px + env(safe-area-inset-bottom,0px))}
+  .top{padding:10px 0;gap:10px}
+  .brand h1{font-size:19px}
+  .brand p,.who .lbl,.who .role,.who-name,.hint{display:none}
+  .who-mail{max-width:120px}
+  .brand-mark{width:32px;height:32px}
+  .who{padding-inline-start:10px}
+  .tabs{position:fixed;top:auto;bottom:0;left:0;right:0;margin:0;z-index:30;display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:0;border-bottom:0;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 16px color-mix(in srgb,var(--color-neutral-900) 8%,transparent)}
+  .tab{flex-direction:column;gap:3px;padding:9px 2px 8px;font-size:12px;letter-spacing:.03em;border-bottom:0;border-top:2px solid transparent;margin:0;min-height:var(--nav-h);justify-content:center}
+  .tab .i{width:22px;height:22px}
+  .tab[aria-selected="true"]{border-top-color:var(--color-accent);color:var(--color-accent-800);background:var(--color-accent-100)}
+  .tab .badge{position:absolute;top:5px;inset-inline-start:calc(50% + 6px);min-width:18px;height:18px;font-size:11px}
+  .tab-actions{display:none}
+  .fab{display:grid;grid-template-columns:1fr 1.3fr;gap:10px;position:fixed;left:14px;right:14px;bottom:calc(var(--nav-h) + 12px + env(safe-area-inset-bottom,0px));z-index:29}
+  .fab .btn{min-height:48px;font-size:16px;background:var(--bg);box-shadow:var(--shadow-md)}
+  .fab .btn.primary{background:var(--color-accent)}
+  .fab:empty{display:none}
+  .toast{bottom:calc(var(--nav-h) + 80px + env(safe-area-inset-bottom,0px))}
+  .btn{min-height:44px}
+  .btn.small{min-height:38px}
+  .chip{min-height:40px}
+  .map-bar{gap:8px}
+  .map-bar .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-14px;padding-inline:14px;width:calc(100% + 28px)}
+  .map-bar .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none}
+  .map-bar select{flex:1 1 140px}
+  .map-bar select,.filters input,.filters select,.field input,.field select,.field textarea{font-size:16px;min-height:44px}
+  .trip{grid-template-columns:48px minmax(0,1fr);padding:14px}
+  .trip .right{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start}
+  .trip .d{grid-row:span 2}
+  .filters{display:grid;grid-template-columns:1fr 1fr}
+  .filters input[type="search"]{grid-column:1/-1}
+  .filters > span.muted{margin:0!important;align-self:center}
+  .admin-t td:nth-child(n){grid-row:auto;grid-column:auto;justify-self:auto;font-size:14px;font-weight:400}
+  .admin-t tbody tr{grid-template-columns:minmax(0,1fr) auto}
+  .admin-t td:nth-child(1){grid-column:1}
+  .admin-t td:nth-child(6){grid-column:2;grid-row:1/span 3;align-self:center}
+  .admin-t td:nth-child(2){grid-column:1;font-weight:500}
+  .admin-t td:nth-child(3),.admin-t td:nth-child(4){display:none}
+  .admin-t td:nth-child(5){grid-column:1}
+  table,tbody{display:block}
+  thead{display:none}
+  tbody tr{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:6px 10px;padding:14px;border-bottom:1px solid color-mix(in srgb,var(--color-text) 9%,transparent);align-items:center}
+  tbody tr:hover td{background:none}
+  tbody tr:hover{background:var(--tint)}
+  td{border:0;padding:0;white-space:normal}
+  td:nth-child(3){grid-row:1;grid-column:1/4;font-size:16px;font-weight:500}
+  td:nth-child(8){grid-row:1;grid-column:4;justify-self:end}
+  td:nth-child(1){grid-row:2;grid-column:1;color:var(--muted);font-size:13px}
+  td:nth-child(2){grid-row:2;grid-column:2;color:var(--muted);font-size:13px}
+  td:nth-child(4){grid-row:2;grid-column:3}
+  td:nth-child(7){grid-row:2;grid-column:4;justify-self:end}
+  td:nth-child(5){grid-row:3;grid-column:1/4}
+  td:nth-child(6){grid-row:3;grid-column:4;justify-self:end}
+  td:nth-child(9){grid-column:1/-1;max-width:none}
+  td:nth-child(9):empty{display:none}
+  .overlay{align-items:flex-end}
+  .sheet{width:100%;height:calc(100% - 24px);border-inline-start:0;border-top:1px solid var(--line)}
+  .sheet-head{padding:14px 16px}
+  .sheet-body{padding:16px}
+  .sheet-foot{padding-inline:16px}
+  .sheet-foot .btn{flex:1 1 auto}
+  .grid2{grid-template-columns:1fr}
+  .kv{grid-template-columns:1fr;gap:2px}
+  .kv dd{margin-bottom:10px}
+  .big-route{font-size:26px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .kpi .v{font-size:30px}
+  .hbar{grid-template-columns:84px minmax(0,1fr) 36px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style id="palette">:root{--color-bg:oklch(0.985 0.006 250);--color-surface:oklch(0.955 0.012 250);--color-text:oklch(0.24 0.03 260);--color-accent:oklch(0.58 0.16 258);--color-accent-2:oklch(0.68 0.15 80);--color-divider:color-mix(in srgb,oklch(0.24 0.03 260) 16%,transparent);--color-accent-100:oklch(0.97 0.040 258);--color-accent-200:oklch(0.93 0.072 258);--color-accent-300:oklch(0.87 0.112 258);--color-accent-400:oklch(0.78 0.144 258);--color-accent-500:oklch(0.68 0.160 258);--color-accent-600:oklch(0.58 0.160 258);--color-accent-700:oklch(0.48 0.152 258);--color-accent-800:oklch(0.38 0.136 258);--color-accent-900:oklch(0.28 0.112 258);--color-accent-2-100:oklch(0.97 0.037 80);--color-accent-2-200:oklch(0.93 0.068 80);--color-accent-2-300:oklch(0.87 0.105 80);--color-accent-2-400:oklch(0.78 0.135 80);--color-accent-2-500:oklch(0.68 0.150 80);--color-accent-2-600:oklch(0.58 0.150 80);--color-accent-2-700:oklch(0.48 0.142 80);--color-accent-2-800:oklch(0.38 0.128 80);--color-accent-2-900:oklch(0.28 0.105 80);--color-neutral-100:oklch(0.97 0.003 255);--color-neutral-200:oklch(0.93 0.005 255);--color-neutral-300:oklch(0.87 0.008 255);--color-neutral-400:oklch(0.78 0.011 255);--color-neutral-500:oklch(0.68 0.012 255);--color-neutral-600:oklch(0.58 0.012 255);--color-neutral-700:oklch(0.48 0.011 255);--color-neutral-800:oklch(0.38 0.010 255);--color-neutral-900:oklch(0.28 0.008 255);--sea:oklch(0.92 0.045 235);--land:oklch(0.94 0.01 250)}</style>
+</head>
+<body>
+
+
+<div class="wrap login-wrap" id="login" hidden></div>
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="4" cy="15" r="2.4" fill="#fff"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><path d="M4 15 C 6 6, 12 12, 16 5" stroke="#fff" stroke-width="1.8" fill="none" stroke-dasharray="2.4 2"/></svg></div>
+      <div><h1 data-t="appName">Movement Planner</h1><p data-t="appSub">Shared NGO movements · Syria and cross-border</p></div>
+    </div>
+    <div class="top-right">
+      <button type="button" class="bell" id="bell" data-act="notify" hidden></button>
+      <div class="who" id="who"></div>
+      <div class="lang" role="group" aria-label="Language"><button type="button" id="lang-en" aria-pressed="true">EN</button><button type="button" id="lang-ar" aria-pressed="false">عربي</button></div>
+    </div>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <div id="banner"></div>
+  <main id="view"></main>
+  <div class="fab" id="fab"></div>
+  <div id="notify-root"></div>
+  <footer class="credit"><div class="viewsw" role="group" aria-label="View"><button type="button" data-view="auto">Auto</button><button type="button" data-view="phone">Phone</button><button type="button" data-view="desktop">Desktop</button></div><span>v1.1 · Wael Shalak · Oct 2026</span></footer>
+</div>
+<div id="overlay-root"></div>
+
+<script>
+(function(){
+"use strict";
+/* Movement Planner v1.1 · © 2026 Wael Shalak */
+window.MOVEMENT_PLANNER={version:"1.1",author:"Wael Shalak",released:"2026-10"};
+const GEO = {"CYP":"M-42.8,302.4L-43.1,302.1L-43.7,301.5L-44.6,301.2L-44.0,301.0L-43.1,301.5L-42.2,301.5L-41.6,302.2L-42.2,302.2L-42.8,302.4ZM-46.0,299.9L-46.3,299.5L-46.0,298.7L-45.2,298.5L-45.7,299.7ZM-49.3,301.2L-51.1,303.4L-53.8,306.8L-54.9,310.2L-54.9,313.9L-55.8,315.1L-56.7,317.3L-58.5,318.3L-62.4,318.4L-63.8,320.5L-65.9,322.0L-71.0,323.7L-74.2,322.7L-76.6,326.9L-82.4,328.7L-82.4,329.9L-82.4,329.4L-82.4,330.6L-82.4,334.8L-82.4,336.8L-82.4,337.2L-82.4,334.8L-82.4,332.6L-82.4,333.3L-82.4,333.8L-82.4,334.0L-82.4,332.1L-82.4,329.9L-82.4,329.9L-82.4,330.9L-82.4,331.4L-82.4,332.6L-82.4,333.1L-82.4,335.0L-82.4,334.8L-82.4,330.8L-82.4,329.6L-82.4,328.7L-82.4,325.2L-82.4,321.8L-82.4,320.3L-82.4,314.4L-82.4,312.4L-82.4,310.2L-82.4,307.6L-82.4,303.9L-82.4,299.9L-82.4,295.3L-82.4,290.9L-82.4,291.4L-82.4,295.1L-82.4,295.6L-82.4,291.8L-82.4,286.0L-82.4,283.3L-82.4,282.5L-82.4,282.3L-82.4,283.0L-82.4,283.8L-82.4,284.8L-82.4,283.8L-82.4,281.3L-82.4,284.3L-82.4,286.7L-82.4,288.0L-82.4,289.7L-82.4,291.9L-82.4,293.8L-82.4,293.4L-82.4,292.3L-82.4,290.9L-82.4,291.9L-82.4,292.1L-82.4,289.1L-82.4,287.2L-82.4,286.2L-82.4,286.9L-82.4,286.0L-82.4,283.7L-82.4,284.7L-82.4,286.4L-82.4,288.2L-81.6,288.4L-81.1,287.0L-78.4,284.5L-76.3,284.5L-72.7,284.0L-72.4,285.5L-71.6,287.7L-69.5,289.9L-69.2,292.3L-69.2,295.8L-70.4,299.9L-69.2,302.2L-67.1,301.9L-66.2,297.3L-65.0,296.3L-63.5,296.3L-63.2,300.0L-60.6,299.9L-59.4,298.0L-57.3,298.8L-56.1,298.3L-54.3,299.0L-51.7,300.2L-49.3,301.2ZM-33.0,294.0L-31.2,294.6L-29.1,295.0L-26.5,294.3L-24.7,295.3L-23.2,294.8L-21.7,295.3L-19.6,299.4L-17.6,302.7L-17.6,303.6L-22.0,302.7L-23.8,301.2L-32.1,302.9L-33.6,304.3L-37.4,304.1L-37.1,302.7L-36.3,300.9L-38.9,299.9L-39.2,297.0L-40.7,295.0L-38.9,294.0L-37.7,295.0L-35.7,294.0L-34.5,292.8Z","ISR":"M-4.2,678.8L1.4,674.4L4.4,669.3L3.8,664.3L14.8,651.4L16.3,650.6L18.9,645.9L15.1,641.6L17.7,637.2L25.5,623.4L32.3,607.4L36.4,596.0L36.4,594.5L37.6,593.3L47.1,557.0L50.4,543.0L51.3,537.1L53.1,527.5L53.9,516.5L56.3,516.2L59.3,517.5L62.8,514.1L64.0,510.8L64.0,508.2L63.4,506.2L65.2,496.9L65.2,493.2L66.1,492.2L65.8,491.2L72.9,491.7L74.1,490.7L75.3,490.5L77.1,490.8L80.9,489.8L81.8,490.3L83.6,492.0L85.1,494.2L90.7,493.2L97.3,491.2L99.3,487.0L100.2,482.7L101.1,475.6L102.3,472.8L104.1,471.8L105.9,474.8L107.3,476.0L107.3,473.8L109.1,472.8L112.1,471.1L116.8,467.4L118.9,466.9L121.0,465.7L124.0,460.8L125.4,459.9L124.9,462.1L124.6,464.0L122.5,465.7L123.7,468.7L121.6,473.4L124.3,479.9L126.3,483.9L124.6,487.3L127.5,490.2L128.4,501.0L130.8,505.5L129.0,507.9L126.6,513.5L126.3,517.2L120.1,525.6L114.2,528.8L110.0,532.0L106.8,532.9L104.7,535.2L103.8,535.9L104.1,537.4L105.0,538.5L104.4,539.3L105.0,542.7L105.3,544.5L105.0,544.4L104.7,544.4L103.8,544.7L104.4,547.4L103.2,548.1L104.1,548.1L104.7,549.4L105.6,550.8L104.4,551.6L103.8,553.0L104.4,553.3L105.0,553.7L104.4,554.7L104.4,555.7L103.5,556.5L103.8,557.0L103.2,557.7L103.8,558.6L102.6,559.1L103.2,560.4L103.8,561.6L95.2,559.2L91.3,558.6L90.7,553.0L87.5,548.9L80.1,548.9L76.2,546.4L75.0,545.7L72.3,546.7L67.6,550.8L62.8,553.7L60.5,561.8L59.6,565.5L58.1,566.1L57.5,567.7L56.9,572.2L58.4,573.2L58.4,575.6L54.5,579.8L53.3,582.2L55.1,587.1L56.0,598.4L56.0,600.8L56.0,601.4L56.0,602.1L57.2,609.0L56.0,613.8L53.3,616.0L53.9,618.0L58.1,618.5L59.3,617.8L61.4,615.8L67.0,618.2L74.1,620.5L74.7,623.4L74.4,626.1L73.5,626.1L68.2,626.8L64.9,628.8L55.4,636.9L53.9,639.1L52.2,644.5L51.6,650.6L46.8,660.4L49.5,665.1L53.9,665.1L61.1,663.7L76.2,661.9L89.8,651.3L95.5,650.9L95.5,657.7L93.4,663.9L92.5,667.5L91.3,671.9L90.7,676.9L92.5,681.5L94.3,686.7L89.8,697.5L89.5,703.6L86.3,707.7L84.2,711.0L84.2,715.6L83.3,718.6L81.2,720.8L80.3,723.0L79.5,728.1L71.2,750.5L69.4,757.0L69.7,760.3L71.2,763.9L70.6,766.2L69.4,768.6L67.9,775.5L69.7,784.5L68.2,791.1L63.7,800.0L63.1,800.0L62.3,800.0L61.7,800.0L57.2,800.0L56.0,800.0L54.2,800.0L53.6,800.0L51.9,800.0L50.7,800.0L49.8,800.0L48.3,800.0L45.6,800.0L45.3,800.0L40.0,800.0L35.8,800.0L35.8,799.3L35.5,798.2L27.5,773.8L23.7,764.1L18.6,759.0L18.6,756.1L19.5,751.7L17.5,748.7L16.6,742.8L9.7,720.8L2.3,700.6L-3.3,681.6Z","PSE":"M15.1,641.6L18.9,645.9L16.3,650.6L14.8,651.4L3.8,664.3L4.4,669.3L1.4,674.4L-4.2,678.8L-6.3,672.4L-6.3,667.3L-1.5,662.4L4.1,656.2L11.8,646.5L15.1,641.6ZM103.8,561.6L104.4,563.3L103.8,562.4L103.2,563.3L103.5,567.2L104.1,569.9L104.1,573.6L104.4,575.1L103.8,575.6L105.0,576.3L103.5,582.5L103.8,584.6L102.6,585.2L103.2,586.4L101.7,590.1L101.1,592.5L100.8,598.9L102.0,602.3L102.3,604.5L102.6,606.3L101.7,607.0L100.8,608.0L102.0,617.3L103.8,623.4L99.0,631.5L96.1,643.1L95.5,650.7L95.5,650.7L85.1,654.1L71.2,663.7L56.0,664.4L51.6,665.4L47.7,663.7L48.0,657.0L52.2,647.4L52.5,641.8L53.9,638.8L62.3,631.8L66.4,627.4L73.2,625.6L74.1,626.3L74.7,625.6L74.7,621.7L72.6,619.5L62.5,616.1L60.8,616.3L58.7,618.3L56.6,618.5L53.1,616.3L53.9,614.6L58.4,612.4L55.7,605.2L56.0,601.8L56.0,601.1L56.0,600.6L56.0,596.5L54.5,585.4L53.3,581.3L57.8,576.8L58.7,574.3L57.8,572.6L57.2,570.9L57.8,566.5L59.3,565.8L60.2,563.4L61.4,556.5L65.2,552.1L70.3,549.3L73.5,545.9L75.0,545.9L78.6,548.4L85.1,548.8L90.1,550.6L90.7,556.0L93.4,559.2L97.3,559.7Z","LBN":"M66.4,491.2L66.4,491.0L66.4,490.5L66.1,490.5L66.1,490.2L65.8,489.8L66.4,488.8L67.3,487.6L67.9,486.8L70.0,485.9L70.6,484.9L70.9,483.7L71.4,482.9L71.2,482.2L71.4,482.2L71.7,482.4L72.0,482.9L74.7,477.5L75.0,474.5L73.2,471.9L75.0,470.6L76.2,468.7L77.7,464.5L78.0,463.1L78.0,460.4L78.3,459.1L79.8,456.7L80.3,455.5L80.1,454.2L84.2,451.0L86.6,448.6L87.5,445.6L87.5,444.4L90.7,435.6L90.1,434.9L91.3,433.9L92.5,429.7L93.7,428.9L93.7,427.7L97.0,419.6L97.3,417.6L97.6,413.5L97.6,412.8L97.3,411.6L96.7,410.6L96.4,409.8L97.0,408.9L97.9,408.8L98.7,408.9L99.9,409.3L100.2,409.8L100.8,409.8L101.7,409.3L102.9,409.4L103.5,409.4L105.0,408.9L105.3,408.3L106.2,406.4L106.5,405.6L106.5,405.1L106.5,404.9L105.9,404.9L106.8,404.0L107.6,401.7L108.2,400.7L108.8,400.5L110.0,400.5L110.6,400.0L110.6,399.1L110.0,398.6L109.7,398.5L109.4,398.0L109.4,395.6L110.6,391.2L111.2,388.0L110.9,387.0L109.7,384.8L109.4,383.3L109.4,379.9L109.7,379.2L110.9,378.4L111.2,377.7L111.2,374.7L111.5,371.5L112.4,368.9L114.5,367.2L116.0,368.4L117.1,366.2L118.3,363.0L119.5,361.0L124.3,358.5L125.4,356.6L124.0,354.1L124.0,353.6L125.7,353.9L132.3,352.2L136.4,348.0L137.9,347.0L138.8,346.1L139.1,344.8L139.4,340.0L139.1,337.9L138.5,336.2L137.6,335.0L138.8,335.0L139.4,335.2L140.0,335.5L141.5,336.7L143.2,337.2L145.0,337.2L147.4,336.8L149.5,337.0L153.0,337.3L153.3,337.2L154.2,336.7L154.8,336.5L155.1,336.7L156.3,337.3L156.6,337.5L161.6,337.3L162.5,336.8L163.1,336.2L163.4,335.2L163.7,333.1L163.7,332.5L165.5,331.3L166.7,332.1L168.8,335.7L170.2,337.0L172.3,337.7L174.4,337.7L176.5,337.0L176.2,340.2L175.6,340.7L174.7,340.0L173.5,339.5L172.0,340.4L172.0,341.6L172.0,343.1L171.7,344.6L170.2,346.0L167.9,347.1L166.4,348.7L167.3,350.2L167.6,350.5L167.9,350.7L168.2,350.7L168.5,350.5L169.9,350.2L172.3,350.0L174.7,350.2L175.9,350.5L176.5,352.2L177.1,353.6L178.3,354.4L179.7,355.1L180.9,356.6L181.5,356.9L182.1,356.8L183.3,357.8L183.9,358.6L183.9,359.6L183.6,361.3L183.3,362.0L183.0,362.5L182.7,363.0L182.7,363.9L182.7,364.7L183.3,365.4L185.1,367.9L186.0,368.9L186.6,369.1L187.2,369.1L187.7,369.3L188.0,369.9L187.7,371.3L187.2,372.5L186.6,373.7L186.9,375.5L187.5,377.0L189.5,379.1L189.8,380.1L187.5,382.6L185.7,386.0L182.1,389.0L180.3,391.2L179.7,392.6L179.7,393.7L179.1,394.6L178.0,395.3L176.8,395.4L175.0,394.8L174.1,394.6L172.3,395.6L169.7,399.0L166.4,402.0L164.9,403.5L164.0,405.4L162.2,408.9L162.2,409.3L162.8,410.3L163.4,411.0L165.8,412.8L169.1,413.3L170.5,414.2L170.5,416.4L169.7,417.6L167.9,417.9L164.9,417.0L160.8,415.0L159.3,414.7L158.1,415.2L156.9,416.2L155.4,417.0L153.6,417.0L153.0,416.5L152.1,415.2L151.6,414.9L148.6,416.7L147.1,417.4L145.6,417.7L144.1,418.4L143.5,419.4L142.4,421.6L139.7,424.0L138.5,425.7L137.9,426.8L136.4,428.2L135.8,429.0L135.8,429.9L135.8,431.7L135.8,432.8L135.2,433.1L134.3,433.4L134.0,433.8L133.8,436.0L134.6,436.6L136.4,437.0L138.5,438.2L139.7,438.5L141.2,439.2L142.7,440.2L143.2,441.4L142.9,443.2L141.8,444.7L140.0,445.9L138.5,446.6L136.4,446.6L134.6,447.3L133.8,448.6L134.6,450.7L133.5,453.7L130.8,455.9L129.3,456.9L127.2,458.1L125.4,459.3L124.0,460.8L122.5,464.2L121.0,465.7L120.1,466.4L118.9,466.9L117.7,467.2L116.8,467.4L115.4,467.7L112.1,471.1L110.6,472.4L109.1,472.8L107.9,472.9L107.3,473.8L107.6,475.6L107.3,476.0L107.1,475.6L105.9,474.8L104.4,472.4L104.1,471.8L102.9,471.9L102.3,472.8L102.0,474.3L101.1,475.6L100.5,477.8L100.2,482.7L99.9,485.3L99.3,487.0L97.6,489.7L97.3,491.2L94.6,491.5L90.7,493.2L86.3,494.4L85.1,494.2L84.2,493.2L83.6,492.0L83.0,491.0L81.8,490.3L81.5,490.2L80.9,489.8L80.1,489.8L77.1,490.8L76.5,490.8L75.3,490.5L74.7,490.5L74.1,490.7L73.2,491.5L72.9,491.7L66.4,491.2Z","SYR":"M120.1,525.6L122.2,522.2L126.3,517.2L126.9,514.6L126.6,513.5L127.8,510.4L129.0,507.9L129.6,507.7L130.8,505.5L129.0,502.2L128.4,501.0L127.5,491.5L127.5,490.2L124.6,488.8L124.6,487.3L125.4,485.8L126.3,483.9L126.0,481.0L124.3,479.9L124.0,475.1L121.6,473.4L121.0,472.8L123.7,468.7L120.7,466.5L122.5,465.7L123.1,465.0L124.6,464.0L124.6,462.6L124.9,462.1L125.1,460.4L125.4,459.9L125.4,459.3L127.2,458.1L129.3,456.9L130.8,455.9L133.5,453.7L134.6,450.7L133.8,448.6L134.6,447.3L136.4,446.6L138.5,446.6L140.0,445.9L141.8,444.7L142.9,443.2L143.2,441.4L142.7,440.2L141.2,439.2L139.7,438.5L138.5,438.2L136.4,437.0L134.6,436.6L133.8,436.0L134.0,433.8L134.3,433.4L135.2,433.1L135.8,432.8L135.8,431.7L135.8,429.9L135.8,429.0L136.4,428.2L137.9,426.8L138.5,425.7L139.7,424.0L142.4,421.6L143.5,419.4L144.1,418.4L145.6,417.7L147.1,417.4L148.6,416.7L151.6,414.9L152.1,415.2L153.0,416.5L153.6,417.0L155.4,417.0L156.9,416.2L158.1,415.2L159.3,414.7L160.8,415.0L164.9,417.0L167.9,417.9L169.7,417.6L170.5,416.4L170.5,414.2L169.1,413.3L165.8,412.8L163.4,411.0L162.8,410.3L162.2,409.3L162.2,408.9L164.0,405.4L164.9,403.5L166.4,402.0L169.7,399.0L172.3,395.6L174.1,394.6L175.0,394.8L176.8,395.4L178.0,395.3L179.1,394.6L179.7,393.7L179.7,392.6L180.3,391.2L182.1,389.0L185.7,386.0L187.5,382.6L189.8,380.1L189.5,379.1L187.5,377.0L186.9,375.5L186.6,373.7L187.2,372.5L187.7,371.3L188.0,369.9L187.7,369.3L187.2,369.1L186.6,369.1L186.0,368.9L185.1,367.9L183.3,365.4L182.7,364.7L182.7,363.9L182.7,363.0L183.0,362.5L183.3,362.0L183.6,361.3L183.9,359.6L183.9,358.6L183.3,357.8L182.1,356.8L181.5,356.9L180.9,356.6L179.7,355.1L178.3,354.4L177.1,353.6L176.5,352.2L175.9,350.5L174.7,350.2L172.3,350.0L169.9,350.2L168.5,350.5L168.2,350.7L167.9,350.7L167.6,350.5L167.3,350.2L166.4,348.7L167.9,347.1L170.2,346.0L171.7,344.6L172.0,343.1L172.0,341.6L172.0,340.4L173.5,339.5L174.7,340.0L175.6,340.7L176.2,340.2L176.5,337.0L174.4,337.7L172.3,337.7L170.2,337.0L168.8,335.7L166.7,332.1L165.5,331.3L163.7,332.5L163.7,333.1L163.4,335.2L163.1,336.2L162.5,336.8L161.6,337.3L156.6,337.5L156.3,337.3L155.1,336.7L154.8,336.5L154.2,336.7L153.3,337.2L153.0,337.3L149.5,337.0L147.4,336.8L145.0,337.2L143.2,337.2L141.5,336.7L140.0,335.5L139.4,335.2L138.8,335.0L137.6,335.0L137.3,333.1L135.8,330.1L135.2,327.4L134.3,325.9L134.3,325.0L134.3,321.0L134.0,320.3L132.6,317.8L132.3,316.7L131.7,314.7L129.0,307.6L129.6,307.3L129.6,306.8L130.2,306.3L130.2,305.4L130.2,304.8L129.6,304.3L129.6,303.4L130.2,303.1L130.2,302.9L129.9,302.9L129.6,302.1L130.5,300.7L130.8,300.0L131.4,299.4L132.0,297.8L131.7,296.3L131.1,295.0L130.8,293.8L130.8,289.1L131.4,287.9L135.2,282.0L137.0,280.3L136.1,277.6L133.2,271.2L134.3,267.8L133.8,266.1L133.2,259.7L133.5,258.2L132.6,257.5L128.7,252.1L126.9,251.2L126.0,250.7L125.7,249.7L125.1,249.0L123.7,249.4L122.5,249.7L122.2,250.0L121.3,249.5L121.3,248.5L121.6,247.0L121.9,245.8L121.3,245.3L118.3,243.8L118.6,243.3L118.6,242.3L118.9,241.8L118.3,241.8L117.4,242.4L117.4,241.8L118.9,241.3L120.7,240.3L121.9,238.7L122.2,236.9L122.2,235.9L121.3,234.5L121.3,233.2L121.6,232.5L123.7,231.8L126.9,225.7L126.9,225.2L126.9,222.9L126.6,221.0L125.7,218.6L124.6,216.4L123.4,215.1L127.5,215.3L129.6,214.8L130.2,213.4L130.8,211.4L132.9,208.2L133.5,208.5L135.2,208.2L136.7,207.5L138.5,207.3L139.4,208.5L139.4,209.7L139.4,211.0L139.4,212.2L140.3,213.1L141.8,213.4L144.1,213.4L146.8,214.6L151.6,218.0L153.0,217.8L153.9,214.8L154.5,207.7L156.3,204.8L159.0,204.0L161.0,204.5L162.2,204.1L162.8,200.6L164.6,199.9L167.9,201.2L169.7,200.6L169.4,197.7L169.7,183.3L169.9,181.8L170.2,181.2L170.8,180.5L171.1,179.5L169.9,178.1L170.8,177.3L172.0,178.5L172.9,179.1L174.1,179.6L176.2,179.8L176.8,180.0L177.4,180.0L178.0,179.6L178.3,179.1L178.6,178.5L178.8,177.8L179.7,177.4L181.2,177.3L187.5,178.1L188.9,178.1L194.9,177.1L195.5,176.3L195.2,174.1L194.9,172.5L194.3,171.0L193.7,169.5L193.7,169.3L192.5,168.3L191.3,167.8L188.6,167.5L187.7,166.6L188.0,166.6L188.6,165.8L188.9,164.3L189.2,163.4L188.9,162.6L188.6,161.9L188.3,161.2L188.0,161.1L186.6,160.4L186.0,159.9L185.7,159.2L184.2,153.8L183.9,152.1L184.2,150.6L186.6,146.7L187.2,142.5L187.2,137.9L188.0,133.7L189.2,131.3L189.5,129.5L189.5,127.5L189.8,125.3L190.7,123.4L192.2,121.5L193.1,119.7L192.8,117.2L193.7,117.2L194.3,117.3L194.6,117.3L209.7,122.4L214.7,122.7L216.5,123.1L218.0,123.7L219.5,124.6L221.0,125.8L223.4,128.0L223.9,129.3L224.2,131.3L223.4,134.5L223.6,135.7L225.1,137.1L226.9,137.9L227.5,137.8L228.4,136.9L229.6,135.6L231.1,134.9L232.5,135.1L233.7,135.4L235.5,135.6L240.6,134.2L242.3,134.2L256.0,136.6L259.3,136.6L271.4,129.0L276.5,126.8L290.1,123.9L303.2,118.0L305.5,117.5L307.0,116.5L315.0,111.6L320.7,109.4L323.3,109.2L328.7,109.9L344.4,114.5L348.6,116.7L357.2,125.6L359.5,128.0L364.6,130.7L370.5,131.3L383.9,130.7L385.6,130.2L390.1,129.8L402.6,134.0L407.0,133.9L423.6,130.8L450.3,125.8L468.1,119.4L476.4,114.5L479.4,113.6L482.4,112.9L485.3,111.6L491.3,107.7L502.2,100.6L503.7,99.6L505.5,98.9L507.3,98.6L509.4,98.4L513.2,97.4L524.2,91.5L528.1,90.0L543.8,87.8L563.4,91.5L566.9,93.0L568.7,93.5L591.8,92.5L626.0,84.6L635.5,82.4L639.0,80.3L645.2,74.6L649.4,69.4L650.6,68.7L652.1,67.5L653.0,68.5L653.0,69.7L653.0,70.7L653.0,71.2L654.1,71.4L656.5,72.6L657.1,72.4L657.7,71.7L658.0,71.4L658.6,71.6L658.9,72.1L659.5,73.1L659.8,73.6L662.5,75.8L663.0,76.0L663.6,77.3L662.2,82.9L663.0,84.2L663.9,84.7L663.9,86.3L663.9,89.0L664.5,90.1L665.1,91.2L665.7,92.3L665.7,93.9L663.0,95.7L657.7,100.6L649.4,109.4L632.8,126.6L621.8,138.3L619.4,140.0L617.4,141.1L591.8,146.4L586.5,147.2L583.8,148.4L582.3,150.6L574.9,164.4L574.3,167.1L571.7,192.3L571.7,194.0L572.0,195.7L574.0,200.6L580.6,214.3L581.5,217.5L581.8,220.7L582.0,234.5L581.8,237.6L580.3,240.6L577.6,244.8L573.7,250.6L572.9,253.6L572.3,263.4L568.7,275.7L567.8,281.8L568.1,284.2L568.4,300.5L569.3,318.1L569.0,320.6L568.4,323.2L554.2,350.5L551.2,357.1L549.4,359.8L547.0,361.3L526.6,366.9L514.7,374.2L505.5,379.7L496.3,385.3L487.1,390.9L484.1,392.7L478.2,396.3L469.0,401.9L459.8,407.4L450.9,413.0L441.7,418.6L432.5,424.0L423.3,429.5L414.4,435.1L405.2,440.7L396.0,446.3L387.1,451.8L377.9,457.2L368.7,462.8L348.6,475.6L331.1,487.0L323.9,491.3L309.7,500.6L299.0,507.4L285.1,516.7L270.8,526.0L263.4,531.0L256.9,535.2L242.6,544.5L233.4,550.6L221.0,559.1L207.6,568.3L206.4,568.7L205.6,568.7L200.2,567.2L198.4,567.2L196.9,568.0L194.0,565.6L182.7,564.3L179.7,564.0L178.3,563.1L173.8,562.6L172.0,562.1L170.8,561.4L163.7,554.3L158.4,550.6L155.7,547.7L154.8,547.2L154.2,547.4L153.3,548.3L153.0,548.4L152.4,548.4L151.6,548.1L151.0,547.9L148.0,548.4L146.8,548.4L145.9,548.4L145.6,548.3L145.6,547.9L145.0,546.7L141.5,540.8L140.6,539.1L140.6,537.3L140.9,535.6L140.3,534.6L138.5,534.4L137.3,534.6L136.4,534.2L135.8,533.6L134.9,532.5L135.2,532.7L135.5,532.2L135.5,531.5L135.5,530.9L135.2,530.7L134.0,530.7L133.8,530.7L132.3,529.2L131.4,528.7L122.8,526.6L121.9,525.6L121.6,525.3L121.0,525.1L120.7,525.3L120.1,525.6Z","TUR":"M753.2,-100.0L753.5,-100.0L756.5,-100.0L763.6,-100.0L769.6,-100.0L770.7,-100.0L771.3,-100.0L775.5,-100.0L776.7,-100.0L775.2,-100.0L775.2,-100.0L770.7,-100.0L769.9,-100.0L769.0,-100.0L769.6,-100.0L766.0,-100.0L763.3,-100.0L768.7,-100.0L767.2,-100.0L766.0,-100.0L769.0,-100.0L774.0,-100.0L773.4,-100.0L776.4,-100.0L771.9,-100.0L771.9,-100.0L783.2,-100.0L802.2,-100.0L806.3,-100.0L808.7,-100.0L810.5,-100.0L813.2,-100.0L820.6,-100.0L826.2,-100.0L837.8,-100.0L844.6,-100.0L845.8,-100.0L847.0,-100.0L848.5,-100.0L849.7,-100.0L854.4,-100.0L855.6,-100.0L856.5,-100.0L861.8,-100.0L863.9,-100.0L866.0,-100.0L857.7,-100.0L851.4,-100.0L848.2,-100.0L837.2,-100.0L837.2,-100.0L833.9,-100.0L833.3,-100.0L833.9,-100.0L833.0,-100.0L832.8,-100.0L829.8,-100.0L823.8,-100.0L815.8,-100.0L809.6,-100.0L805.8,-100.0L803.1,-100.0L800.7,-100.0L803.4,-100.0L804.3,-100.0L804.9,-100.0L806.3,-100.0L807.8,-100.0L814.7,-100.0L813.8,-100.0L814.1,-100.0L812.0,-100.0L811.4,-98.6L812.0,-96.4L813.2,-95.3L813.8,-93.7L814.1,-92.1L815.2,-89.0L817.6,-86.3L822.4,-81.4L820.0,-72.1L820.6,-69.8L820.6,-67.2L819.4,-65.9L822.1,-64.9L823.3,-63.9L823.8,-60.1L824.1,-51.2L823.0,-45.5L823.3,-41.7L823.0,-39.0L824.1,-37.7L829.5,-36.5L833.0,-38.2L835.4,-36.7L837.2,-33.8L835.4,-29.7L830.1,-25.0L830.1,-18.3L829.2,-14.7L827.1,-13.4L826.2,-12.0L826.5,-9.5L823.8,-8.0L822.4,-4.6L819.7,-0.9L818.2,1.8L817.6,4.4L817.9,7.1L816.4,9.1L816.1,10.3L820.3,13.0L826.8,12.6L830.7,14.7L831.3,16.7L832.8,19.1L833.9,19.1L835.1,19.4L834.8,21.4L835.4,23.3L837.8,22.9L841.1,22.1L845.5,24.8L848.8,29.4L844.9,32.9L844.0,36.8L847.6,39.8L847.0,43.5L846.4,48.6L847.3,52.3L846.7,56.9L850.8,57.9L853.2,61.6L856.8,61.9L858.3,64.3L863.6,68.7L865.1,73.9L863.0,75.8L861.5,78.5L862.4,82.2L862.4,85.7L859.7,83.2L849.7,82.2L843.7,85.6L839.0,90.8L834.8,93.5L827.1,96.9L825.3,100.6L823.8,103.0L819.4,102.3L818.2,100.6L814.4,91.3L814.9,87.1L817.3,84.7L819.1,84.2L820.0,82.0L819.4,78.7L817.9,74.6L814.7,72.1L805.2,68.7L798.6,68.7L793.3,74.8L786.2,78.3L783.8,80.0L781.4,78.0L778.5,77.0L768.1,77.3L763.9,76.3L761.8,74.8L759.5,74.8L756.5,75.6L751.5,72.1L747.0,69.5L743.7,67.9L741.4,68.4L739.9,69.2L738.7,68.9L726.5,63.0L720.6,64.0L715.3,66.8L708.4,67.5L701.0,64.8L699.8,62.6L698.1,62.4L693.6,64.5L693.0,66.0L692.4,67.5L681.1,84.7L679.7,85.9L667.8,88.6L663.9,86.3L663.0,84.2L663.6,77.3L662.5,75.8L659.5,73.1L658.6,71.6L657.7,71.7L656.5,72.6L653.0,71.2L653.0,69.7L652.1,67.5L649.4,69.4L639.0,80.3L626.0,84.6L568.7,93.5L563.4,91.5L528.1,90.0L513.2,97.4L507.3,98.6L503.7,99.6L491.3,107.7L482.4,112.9L476.4,114.5L450.3,125.8L407.0,133.9L390.1,129.8L383.9,130.7L364.6,130.7L357.2,125.6L344.4,114.5L323.3,109.2L315.0,111.6L305.5,117.5L290.1,123.9L271.4,129.0L256.0,136.6L240.6,134.2L233.7,135.4L231.1,134.9L228.4,136.9L226.9,137.9L223.6,135.7L224.2,131.3L223.4,128.0L219.5,124.6L216.5,123.1L209.7,122.4L194.3,117.3L192.8,117.2L192.2,121.5L189.8,125.3L189.5,129.5L188.0,133.7L187.2,142.5L184.2,150.6L184.2,153.8L186.0,159.9L188.0,161.1L188.6,161.9L189.2,163.4L188.6,165.8L187.7,166.6L191.3,167.8L193.7,169.3L194.3,171.0L195.2,174.1L194.9,177.1L187.5,178.1L179.7,177.4L178.6,178.5L178.0,179.6L176.8,180.0L174.1,179.6L172.0,178.5L169.9,178.1L170.8,180.5L169.9,181.8L169.4,197.7L167.9,201.2L162.8,200.6L161.0,204.5L156.3,204.8L153.9,214.8L151.6,218.0L144.1,213.4L140.3,213.1L139.4,211.0L139.4,208.5L136.7,207.5L133.5,208.5L133.8,206.8L138.2,199.9L135.8,191.3L129.0,180.3L126.9,175.6L124.6,173.0L122.5,169.5L124.9,164.8L126.3,163.4L128.4,163.1L129.6,160.2L131.7,158.7L132.9,157.3L134.3,154.5L135.2,153.6L139.4,152.1L143.8,146.2L153.6,140.6L155.7,139.6L157.5,135.7L157.8,133.0L157.2,131.2L156.6,129.3L156.6,121.5L150.7,113.1L145.0,108.2L138.8,108.4L131.4,116.5L129.0,117.8L125.4,121.5L121.0,123.2L111.2,124.6L109.1,127.5L108.5,127.3L108.2,126.4L106.8,127.5L105.0,130.0L106.8,129.8L108.8,128.8L109.4,129.1L110.0,130.0L110.6,128.6L110.0,127.3L111.5,127.3L112.4,128.8L114.2,128.0L116.2,128.0L109.1,131.8L107.9,135.4L112.7,130.3L115.1,129.3L111.5,133.4L110.3,135.9L109.7,138.3L109.1,139.8L107.1,140.8L103.5,141.3L99.9,138.8L98.1,138.6L97.3,140.1L98.7,140.6L97.9,140.8L93.7,140.6L91.3,142.1L90.1,143.2L86.3,145.5L85.4,145.4L83.0,143.2L61.1,130.5L56.3,128.0L53.3,127.1L51.9,127.3L49.5,128.0L50.1,125.9L45.6,121.9L38.2,119.2L32.3,118.7L24.6,121.5L21.0,123.2L19.8,125.6L16.9,127.3L0.5,139.1L-9.0,150.1L-10.1,152.6L-12.5,154.1L-18.4,158.5L-18.2,164.4L-19.9,168.5L-24.7,169.7L-25.3,171.7L-25.0,172.0L-27.3,175.2L-27.6,177.9L-29.4,178.6L-28.8,176.3L-30.3,171.0L-33.3,169.5L-35.4,168.5L-38.0,172.0L-40.4,173.2L-39.5,173.6L-40.1,174.9L-42.2,177.4L-46.0,178.6L-49.0,181.8L-49.9,185.5L-50.8,185.7L-53.2,181.2L-54.9,181.0L-57.9,183.2L-61.8,187.2L-62.4,186.2L-64.1,185.4L-69.5,184.2L-74.2,186.1L-78.4,185.2L-81.6,186.7L-82.4,186.9L-82.4,187.7L-82.4,186.6L-82.4,186.9L-82.4,189.6L-82.4,191.8L-82.4,191.1L-82.4,191.1L-82.4,189.6L-82.4,192.8L-82.4,197.4L-82.4,195.3L-82.4,190.6L-82.4,190.1L-82.4,186.1L-82.4,184.0L-82.4,183.0L-82.4,177.1L-82.4,175.6L-82.4,172.0L-82.4,168.5L-82.4,161.2L-82.4,159.7L-82.4,157.0L-82.4,156.2L-82.4,151.4L-82.4,145.7L-82.4,145.2L-82.4,144.5L-82.4,143.8L-82.4,143.7L-82.4,141.8L-82.4,140.8L-82.4,140.3L-82.4,136.7L-82.4,135.9L-82.4,132.9L-82.4,130.5L-82.4,123.2L-82.4,119.2L-82.4,115.0L-82.4,113.4L-82.4,114.1L-82.4,119.4L-82.4,121.9L-82.4,128.1L-82.4,131.5L-82.4,132.9L-82.4,134.7L-82.4,138.1L-82.4,140.0L-82.4,140.3L-82.4,146.0L-82.4,149.4L-82.4,154.6L-82.4,158.2L-82.4,161.6L-82.4,163.6L-82.4,165.8L-82.4,169.2L-82.4,170.9L-82.4,171.2L-82.4,172.9L-82.4,176.1L-82.4,179.5L-82.4,173.4L-82.4,173.2L-82.4,170.2L-82.4,172.5L-82.4,173.9L-82.4,174.6L-82.4,174.6L-82.4,175.9L-82.4,175.1L-82.4,174.1L-82.4,175.2L-82.4,178.1L-82.4,178.3L-82.4,178.3L-82.4,180.1L-82.4,181.5L-82.4,182.2L-82.4,183.5L-82.4,185.5L-82.4,186.2L-82.4,185.2L-82.4,184.5L-82.4,184.4L-82.4,184.9L-82.4,183.5L-82.4,184.2L-82.4,185.0L-82.4,185.5L-82.4,187.7L-82.4,184.4L-82.4,182.7L-82.4,181.3L-82.4,181.5L-82.4,180.5L-82.4,180.0L-82.4,179.3L-82.4,179.0L-82.4,176.9L-82.4,173.2L-82.4,173.9L-82.4,173.2L-82.4,173.9L-82.4,174.6L-82.4,175.9L-82.4,176.8L-82.4,175.2L-82.4,175.2L-82.4,170.3L-82.4,167.6L-82.4,164.3L-82.4,163.8L-82.4,163.1L-82.4,161.7L-82.4,160.9L-82.4,159.4L-82.4,158.9L-82.4,158.2L-82.4,154.6L-82.4,152.6L-82.4,151.1L-82.4,150.6L-82.4,146.4L-82.4,145.2L-82.4,145.5L-82.4,144.8L-82.4,142.5L-82.4,140.3L-82.4,137.6L-82.4,137.6L-82.4,135.6L-82.4,137.3L-82.4,137.4L-82.4,135.7L-82.4,134.0L-82.4,129.8L-82.4,126.3L-82.4,125.9L-82.4,128.8L-82.4,130.0L-82.4,130.3L-82.4,131.5L-82.4,133.2L-82.4,134.4L-82.4,134.9L-82.4,136.6L-82.4,135.9L-82.4,134.2L-82.4,134.2L-82.4,137.4L-82.4,139.3L-82.4,139.8L-82.4,137.9L-82.4,136.9L-82.4,135.6L-82.4,134.5L-82.4,132.2L-82.4,129.5L-82.4,129.0L-82.4,128.5L-82.4,129.5L-82.4,125.3L-82.4,121.5L-82.4,120.0L-82.4,119.5L-82.4,119.0L-82.4,119.4L-82.4,120.5L-82.4,119.2L-82.4,117.7L-82.4,121.0L-82.4,120.2L-82.4,119.2L-82.4,118.2L-82.4,115.0L-82.4,115.0L-82.4,114.1L-82.4,113.6L-82.4,112.3L-82.4,111.8L-82.4,113.4L-82.4,114.3L-82.4,115.1L-82.4,116.5L-82.4,117.2L-82.4,120.0L-82.4,119.0L-82.4,120.0L-82.4,120.7L-82.4,119.5L-82.4,118.2L-82.4,117.2L-82.4,115.5L-82.4,115.3L-82.4,118.7L-82.4,121.0L-82.4,125.8L-82.4,127.3L-82.4,127.3L-82.4,128.5L-82.4,128.5L-82.4,129.1L-82.4,129.5L-82.4,131.5L-82.4,134.9L-82.4,139.6L-82.4,140.3L-82.4,141.3L-82.4,141.8L-82.4,142.8L-82.4,143.5L-82.4,143.3L-82.4,143.8L-82.4,143.5L-82.4,142.1L-82.4,141.0L-82.4,140.5L-82.4,139.1L-82.4,136.9L-82.4,134.2L-82.4,136.2L-82.4,134.7L-82.4,132.4L-82.4,131.0L-82.4,132.5L-82.4,132.9L-82.4,132.2L-82.4,132.0L-82.4,130.7L-82.4,129.3L-82.4,129.3L-82.4,128.6L-82.4,128.0L-82.4,127.3L-82.4,128.1L-82.4,126.1L-82.4,125.3L-82.4,124.1L-82.4,122.6L-82.4,123.6L-82.4,122.9L-82.4,119.9L-82.4,119.9L-82.4,122.6L-82.4,123.6L-82.4,123.7L-82.4,125.3L-82.4,124.4L-82.4,125.9L-82.4,124.8L-82.4,125.9L-82.4,124.9L-82.4,125.9L-82.4,124.2L-82.4,124.6L-82.4,124.4L-82.4,123.9L-82.4,126.6L-82.4,128.0L-82.4,132.0L-82.4,132.9L-82.4,132.2L-82.4,132.7L-82.4,131.5L-82.4,134.2L-82.4,134.9L-82.4,133.7L-82.4,133.2L-82.4,133.5L-82.4,131.5L-82.4,131.7L-82.4,130.8L-82.4,129.8L-82.4,128.8L-82.4,129.5L-82.4,128.0L-82.4,125.3L-82.4,124.4L-82.4,123.7L-82.4,123.4L-82.4,121.0L-82.4,119.4L-82.4,121.0L-82.4,121.7L-82.4,121.9L-82.4,119.4L-82.4,118.8L-82.4,120.0L-82.4,120.5L-82.4,120.5L-82.4,120.9L-82.4,119.2L-82.4,117.3L-82.4,116.5L-82.4,116.1L-82.4,114.3L-82.4,113.9L-82.4,113.9L-82.4,113.3L-82.4,112.3L-82.4,109.7L-82.4,109.6L-82.4,108.5L-82.4,107.9L-82.4,107.5L-82.4,106.9L-82.4,106.0L-82.4,106.9L-82.4,106.2L-82.4,106.9L-82.4,107.2L-82.4,107.5L-82.4,108.4L-82.4,107.9L-82.4,107.0L-82.4,106.4L-82.4,105.3L-82.4,106.2L-82.4,102.6L-82.4,100.9L-82.4,100.9L-82.4,100.6L-82.4,97.6L-82.4,96.4L-82.4,95.0L-82.4,96.6L-82.4,96.7L-82.4,98.6L-82.4,96.6L-82.4,97.6L-82.4,97.7L-82.4,97.4L-82.4,99.3L-82.4,100.6L-82.4,100.3L-82.4,99.4L-82.4,102.0L-82.4,100.1L-82.4,102.6L-82.4,100.9L-82.4,100.9L-82.4,99.9L-82.4,97.2L-82.4,97.6L-82.4,98.2L-82.4,100.1L-82.4,99.8L-82.4,99.1L-82.4,98.6L-82.4,98.1L-82.4,97.2L-82.4,98.1L-82.4,99.3L-82.4,101.5L-82.4,102.6L-82.4,104.0L-82.4,104.0L-82.4,103.6L-82.4,99.9L-82.4,96.6L-82.4,93.9L-82.4,91.2L-82.4,89.0L-82.4,88.3L-82.4,89.0L-82.4,88.3L-82.4,88.3L-82.4,88.1L-82.4,86.9L-82.4,85.2L-82.4,84.4L-82.4,85.7L-82.4,85.9L-82.4,84.9L-82.4,85.4L-82.4,85.1L-82.4,86.6L-82.4,87.4L-82.4,88.1L-82.4,87.9L-82.4,88.3L-82.4,91.0L-82.4,89.3L-82.4,87.9L-82.4,86.9L-82.4,86.4L-82.4,86.9L-82.4,82.2L-82.4,80.7L-82.4,80.2L-82.4,81.9L-82.4,80.0L-82.4,78.8L-82.4,76.5L-82.4,75.3L-82.4,73.3L-82.4,71.9L-82.4,71.6L-82.4,72.2L-82.4,72.4L-82.4,73.6L-82.4,76.3L-82.4,76.6L-82.4,74.1L-82.4,73.6L-82.4,74.8L-82.4,73.3L-82.4,70.6L-82.4,68.7L-82.4,65.7L-82.4,69.4L-82.4,67.7L-82.4,63.5L-82.4,60.9L-82.4,58.7L-82.4,60.8L-82.4,63.0L-82.4,64.5L-82.4,65.1L-82.4,66.3L-82.4,65.1L-82.4,65.0L-82.4,64.3L-82.4,64.8L-82.4,64.3L-82.4,62.3L-82.4,60.3L-82.4,59.4L-82.4,56.9L-82.4,52.7L-82.4,52.7L-82.4,51.6L-82.4,48.8L-82.4,46.6L-82.4,45.6L-82.4,45.2L-82.4,41.5L-82.4,39.8L-82.4,34.9L-82.4,31.4L-82.4,31.4L-82.4,28.7L-82.4,25.6L-82.4,21.8L-82.4,18.4L-82.4,16.7L-82.4,13.5L-82.4,12.3L-82.4,10.6L-82.4,9.1L-82.4,7.1L-82.4,1.2L-82.4,1.3L-82.4,-0.0L-82.4,-1.2L-82.4,-1.7L-82.4,-2.6L-82.4,-4.6L-82.4,-6.4L-82.4,-6.3L-82.4,-5.3L-82.4,-3.9L-82.4,-4.1L-82.4,-8.8L-82.4,-11.9L-82.4,-14.6L-82.4,-17.3L-82.4,-17.8L-82.4,-21.6L-82.4,-20.6L-82.4,-13.9L-82.4,-14.6L-82.4,-11.9L-82.4,-10.3L-82.4,-13.2L-82.4,-12.4L-82.4,-13.0L-82.4,-15.6L-82.4,-17.9L-82.4,-19.1L-82.4,-22.0L-82.4,-20.0L-82.4,-22.3L-82.4,-24.3L-82.4,-26.2L-82.4,-22.8L-82.4,-25.7L-82.4,-27.4L-82.4,-29.6L-82.4,-30.1L-82.4,-32.3L-82.4,-34.1L-82.4,-37.0L-82.4,-36.7L-82.4,-37.3L-82.4,-36.5L-82.4,-34.5L-82.4,-33.3L-82.4,-33.0L-82.4,-31.9L-82.4,-31.8L-82.4,-33.6L-82.4,-33.6L-82.4,-33.6L-82.4,-35.5L-82.4,-36.7L-82.4,-40.7L-82.4,-42.6L-82.4,-40.6L-82.4,-43.3L-82.4,-45.8L-82.4,-47.3L-82.4,-45.6L-82.4,-45.5L-82.4,-46.8L-82.4,-50.0L-82.4,-52.9L-82.4,-57.1L-82.4,-58.3L-82.4,-63.5L-82.4,-66.2L-82.4,-66.9L-82.4,-67.9L-82.4,-67.2L-82.4,-65.2L-82.4,-60.5L-82.4,-56.1L-82.4,-52.9L-82.4,-51.9L-82.4,-49.7L-82.4,-47.8L-82.4,-46.3L-82.4,-46.6L-82.4,-46.6L-82.4,-45.5L-82.4,-43.3L-82.4,-41.6L-82.4,-39.0L-82.4,-33.0L-82.4,-31.3L-82.4,-33.5L-82.4,-38.5L-82.4,-41.9L-82.4,-42.6L-82.4,-42.2L-82.4,-36.3L-82.4,-37.0L-82.4,-35.8L-82.4,-36.7L-82.4,-37.7L-82.4,-39.9L-82.4,-40.9L-82.4,-40.9L-82.4,-41.2L-82.4,-41.2L-82.4,-41.4L-82.4,-44.6L-82.4,-46.0L-82.4,-45.3L-82.4,-45.5L-82.4,-45.3L-82.4,-44.3L-82.4,-44.6L-82.4,-49.5L-82.4,-50.7L-82.4,-52.5L-82.4,-53.1L-82.4,-50.7L-82.4,-51.5L-82.4,-53.6L-82.4,-54.9L-82.4,-58.6L-82.4,-60.8L-82.4,-59.8L-82.4,-61.2L-82.4,-62.3L-82.4,-63.9L-82.4,-65.2L-82.4,-66.4L-82.4,-68.9L-82.4,-72.1L-82.4,-74.0L-82.4,-75.3L-82.4,-74.8L-82.4,-74.5L-82.4,-73.5L-82.4,-75.3L-82.4,-76.2L-82.4,-76.4L-82.4,-77.9L-82.4,-78.2L-82.4,-81.6L-82.4,-80.9L-82.4,-81.9L-82.4,-84.8L-82.4,-86.3L-82.4,-86.0L-82.4,-88.7L-82.4,-91.9L-82.4,-94.1L-82.4,-92.2L-82.4,-91.9L-82.4,-93.7L-82.4,-93.7L-82.4,-93.1L-82.4,-93.2L-82.4,-91.4L-82.4,-93.6L-82.4,-95.1L-82.4,-99.8L-80.5,-100.0L-71.3,-100.0L-60.6,-100.0L-38.9,-100.0L-35.1,-100.0L2.6,-100.0L15.1,-100.0L18.6,-100.0L32.6,-100.0L41.2,-100.0L45.6,-100.0L51.0,-100.0L53.3,-100.0L56.9,-100.0L58.4,-100.0L59.6,-100.0L61.1,-100.0L61.4,-100.0L66.4,-100.0L69.7,-100.0L71.7,-100.0L73.8,-100.0L71.2,-100.0L67.3,-100.0L65.8,-100.0L65.8,-100.0L70.6,-100.0L73.8,-100.0L75.0,-100.0L78.6,-100.0L82.1,-100.0L90.7,-100.0L94.6,-100.0L101.4,-100.0L108.8,-100.0L113.6,-100.0L127.5,-100.0L131.4,-100.0L136.4,-100.0L135.8,-100.0L134.3,-100.0L133.2,-100.0L134.0,-100.0L135.8,-100.0L137.9,-100.0L143.2,-100.0L150.1,-100.0L151.0,-100.0L150.4,-100.0L154.8,-100.0L159.6,-100.0L165.2,-100.0L167.9,-100.0L168.5,-100.0L169.9,-100.0L171.4,-100.0L172.6,-100.0L175.0,-100.0L177.4,-100.0L182.7,-100.0L187.7,-100.0L189.2,-100.0L189.8,-100.0L191.3,-100.0L193.7,-100.0L202.6,-100.0L221.3,-100.0L225.1,-100.0L225.7,-100.0L229.0,-100.0L233.7,-100.0L247.1,-100.0L250.1,-100.0L253.6,-100.0L257.2,-100.0L261.9,-100.0L264.0,-100.0L269.0,-100.0L270.8,-100.0L272.6,-100.0L274.4,-100.0L276.5,-100.0L279.4,-100.0L281.5,-100.0L284.5,-100.0L287.1,-100.0L292.8,-100.0L294.9,-100.0L299.6,-100.0L313.2,-100.0L321.6,-100.0L326.9,-100.0L332.2,-100.0L337.0,-100.0L342.3,-100.0L349.4,-100.0L353.6,-100.0L357.5,-100.0L358.9,-100.0L360.7,-100.0L363.1,-100.0L364.6,-100.0L366.1,-100.0L368.7,-100.0L369.6,-100.0L377.0,-100.0L379.7,-100.0L390.7,-100.0L398.1,-100.0L401.1,-100.0L405.5,-100.0L410.0,-100.0L413.5,-100.0L416.2,-100.0L420.9,-100.0L421.8,-100.0L428.1,-100.0L431.3,-100.0L439.3,-100.0L444.1,-100.0L447.4,-100.0L450.6,-100.0L453.3,-100.0L459.5,-100.0L462.5,-100.0L469.6,-100.0L476.7,-100.0L481.5,-100.0L485.9,-100.0L490.7,-100.0L508.2,-100.0L513.2,-100.0L518.3,-100.0L522.4,-100.0L526.3,-100.0L532.2,-100.0L539.0,-100.0L543.8,-100.0L548.8,-100.0L551.8,-100.0L555.6,-100.0L560.4,-100.0L564.2,-100.0L567.8,-100.0L577.6,-100.0L580.3,-100.0L584.4,-100.0L587.1,-100.0L588.3,-100.0L593.9,-100.0L604.0,-100.0L607.3,-100.0L609.9,-100.0L609.9,-100.0L611.4,-100.0L615.0,-100.0L619.1,-100.0L623.3,-100.0L626.8,-100.0L636.0,-100.0L640.2,-100.0L642.6,-100.0L646.4,-100.0L648.8,-100.0L652.1,-100.0L670.8,-100.0L672.8,-100.0L677.0,-100.0L679.7,-100.0L681.1,-100.0L683.2,-100.0L689.2,-100.0L702.2,-100.0L701.3,-100.0L700.7,-100.0L698.4,-100.0L699.8,-100.0L703.1,-100.0L706.1,-100.0L707.3,-100.0L708.4,-100.0L711.4,-100.0L712.0,-100.0L713.5,-100.0L717.0,-100.0L727.1,-100.0L732.2,-100.0L730.1,-100.0L727.7,-100.0L731.3,-100.0L734.8,-100.0L743.4,-100.0L748.5,-100.0L752.9,-100.0L753.2,-100.0Z","IRQ":"M862.4,85.7L861.5,89.6L862.7,92.2L863.9,92.5L864.8,93.7L865.4,95.7L867.8,95.4L869.2,95.5L871.9,97.6L872.5,99.4L871.0,103.3L872.2,106.7L872.2,111.2L868.1,116.7L867.8,120.9L871.6,122.4L875.5,122.4L877.3,124.2L879.0,125.1L881.4,125.8L884.7,131.0L885.6,135.1L882.9,142.1L882.6,144.3L881.4,145.0L882.3,148.1L883.8,149.4L885.0,151.9L886.2,153.5L887.3,155.8L887.6,157.7L890.9,159.7L898.0,157.7L901.6,159.7L902.8,164.4L903.7,170.5L903.1,173.7L905.1,176.1L906.6,179.3L906.9,185.9L910.5,191.3L909.3,194.8L907.8,198.9L909.6,202.1L913.2,201.8L916.4,200.2L921.5,198.7L926.2,200.6L930.4,204.1L935.1,206.7L941.0,217.1L943.4,219.0L947.6,218.1L950.5,219.0L954.1,216.4L955.9,216.8L959.4,215.9L966.3,215.6L969.2,214.3L973.1,215.3L974.0,215.8L974.9,218.5L976.1,219.5L979.6,220.2L980.7,218.8L980.7,217.1L980.7,218.3L980.7,221.2L980.7,224.0L980.7,227.3L980.7,228.6L974.9,230.6L967.2,230.8L964.5,232.7L963.6,235.9L964.5,241.4L961.5,241.9L960.9,242.1L962.4,246.0L963.0,246.8L962.4,247.7L961.5,248.9L961.2,250.6L967.7,261.9L974.3,268.1L974.6,271.5L973.1,273.7L972.5,276.6L976.9,277.4L977.8,280.9L974.9,286.9L976.1,290.1L974.0,290.7L970.4,291.1L967.4,292.4L965.1,294.0L961.5,292.9L958.8,291.4L957.1,291.2L955.9,293.6L955.9,295.3L954.4,295.6L952.9,296.7L952.3,299.2L953.5,303.2L952.6,307.0L950.5,311.0L947.6,309.7L944.0,309.0L943.7,313.5L941.0,317.4L937.5,318.1L936.6,320.5L936.3,323.7L933.6,327.9L935.4,329.7L936.9,330.9L937.2,333.0L938.1,334.0L938.7,336.5L939.0,340.2L940.2,342.1L939.9,344.3L939.3,344.9L931.5,343.9L926.2,341.7L922.6,343.6L923.2,350.5L922.4,352.0L921.5,353.2L916.1,355.6L919.7,365.9L922.9,365.7L926.5,366.9L928.3,371.1L927.1,378.4L925.3,381.1L925.6,383.3L926.8,385.0L925.9,387.2L921.5,391.2L918.5,395.3L916.4,400.5L914.9,401.9L914.9,405.1L918.8,406.2L921.8,406.1L930.4,420.9L932.7,423.1L933.6,426.8L935.1,430.2L937.5,433.1L941.6,436.6L941.9,441.0L943.7,441.4L947.6,438.0L952.9,437.3L954.4,440.0L957.7,442.7L957.4,446.4L952.0,450.5L955.9,452.3L960.0,450.7L960.9,450.3L961.2,450.5L961.8,450.7L964.8,454.4L966.6,458.1L966.9,461.8L970.1,465.8L975.8,472.8L977.8,475.6L977.2,478.7L977.5,480.4L978.7,481.9L976.9,484.6L972.8,488.1L970.1,488.3L966.9,489.5L967.7,491.7L973.1,492.7L974.6,495.2L972.8,498.3L970.4,500.6L976.9,505.2L980.7,506.9L980.7,513.1L980.7,517.9L980.7,524.4L980.7,550.6L980.7,553.8L980.7,554.2L980.7,551.5L980.7,554.2L980.7,556.9L980.7,560.4L980.7,562.4L980.7,563.6L980.7,565.8L980.7,567.7L980.7,570.7L980.7,571.7L980.7,574.4L980.7,576.1L980.7,578.6L980.7,581.0L980.7,582.9L980.7,585.1L980.7,585.9L980.7,587.8L980.7,588.8L980.7,589.6L980.7,595.9L980.7,598.7L980.7,602.3L980.7,608.5L980.7,610.2L980.7,612.8L980.7,615.1L980.7,619.5L980.7,623.9L980.7,676.4L980.7,701.1L980.7,750.5L980.7,754.9L980.7,755.8L980.7,759.3L980.7,765.9L980.7,767.6L980.7,768.3L980.7,767.6L980.7,768.8L980.7,774.9L980.7,778.7L980.7,780.8L980.7,782.8L980.7,784.3L980.7,786.2L980.7,790.4L980.7,791.6L980.7,798.0L980.7,800.0L980.7,796.3L980.7,796.3L980.7,797.0L980.7,791.2L980.7,792.6L980.7,795.1L980.7,797.3L980.7,800.0L980.7,790.2L980.7,796.6L980.7,800.0L972.5,800.0L960.0,800.0L943.1,800.0L926.2,800.0L909.3,800.0L892.4,800.0L879.3,800.0L866.0,800.0L858.0,800.0L857.1,800.0L850.0,800.0L834.2,800.0L818.8,800.0L799.8,800.0L785.0,800.0L771.3,800.0L752.6,790.9L735.7,776.7L721.5,764.2L705.5,750.5L697.5,743.5L682.0,729.3L667.2,715.8L653.3,703.3L640.8,691.9L626.3,683.0L611.7,674.1L597.2,665.1L582.9,656.2L568.4,647.2L553.9,638.3L539.3,629.3L525.1,620.4L509.4,610.7L500.2,606.2L465.4,599.4L432.8,593.7L400.5,587.9L399.9,588.1L399.3,588.1L409.4,578.6L409.7,568.9L406.7,564.6L390.4,568.7L385.6,552.8L385.6,552.5L386.5,529.5L378.8,500.6L372.6,477.2L377.9,457.2L396.0,446.3L414.4,435.1L432.5,424.0L450.9,413.0L469.0,401.9L484.1,392.7L496.3,385.3L514.7,374.2L547.0,361.3L551.2,357.1L568.4,323.2L569.3,318.1L568.1,284.2L568.7,275.7L572.9,253.6L577.6,244.8L581.8,237.6L581.8,220.7L580.6,214.3L572.0,195.7L571.7,192.3L574.9,164.4L583.8,148.4L591.8,146.4L619.4,140.0L632.8,126.6L657.7,100.6L665.7,93.9L665.1,91.2L663.9,89.0L672.5,87.1L680.8,85.4L682.0,82.0L692.7,66.7L693.0,65.3L694.2,64.1L698.9,62.4L700.7,63.1L701.6,65.3L711.7,68.0L717.3,65.3L723.9,63.1L727.7,63.3L739.3,69.2L740.8,69.0L742.3,68.0L744.6,68.0L747.9,70.4L755.3,75.1L757.7,75.4L760.7,74.6L762.4,75.1L766.0,77.1L776.4,76.8L780.5,77.5L783.2,79.7L784.7,79.8L790.6,77.5L795.7,71.2L802.2,68.2L806.6,68.9L816.4,73.3L818.8,76.3L820.0,80.9L820.0,83.0L818.5,84.6L816.4,85.4L814.4,89.1L814.9,93.3L818.8,101.6L823.0,103.1L824.7,102.3L826.8,98.4L827.7,95.7L836.9,92.3L840.8,88.3L847.0,83.4L851.1,82.0L861.5,84.1Z","SAU":"M980.7,800.0L955.3,800.0L917.3,800.0L900.1,800.0L881.7,800.0L869.2,800.0L850.8,800.0L843.4,800.0L832.8,800.0L818.5,800.0L813.5,800.0L810.5,800.0L808.1,800.0L804.3,800.0L799.8,800.0L796.6,800.0L794.5,800.0L791.5,800.0L790.6,800.0L790.6,800.0L788.2,800.0L783.5,800.0L778.8,800.0L773.7,800.0L764.5,800.0L757.1,800.0L752.9,800.0L749.1,800.0L734.8,800.0L735.4,800.0L737.8,800.0L735.7,800.0L731.6,800.0L729.5,800.0L727.1,800.0L727.1,800.0L728.3,800.0L726.5,800.0L726.2,800.0L728.9,800.0L733.1,800.0L734.5,800.0L733.7,800.0L732.2,800.0L731.9,800.0L732.5,800.0L730.4,800.0L725.1,800.0L723.6,800.0L720.9,800.0L718.2,800.0L713.5,800.0L709.3,800.0L709.3,800.0L706.4,800.0L699.5,800.0L700.1,800.0L695.7,800.0L694.2,800.0L695.4,800.0L694.5,800.0L692.7,800.0L693.3,800.0L690.3,800.0L688.9,800.0L686.5,800.0L682.9,800.0L679.4,800.0L679.7,800.0L678.8,800.0L677.6,800.0L675.2,800.0L672.5,800.0L670.8,800.0L669.3,800.0L668.4,800.0L663.9,800.0L664.8,800.0L664.5,800.0L664.5,800.0L663.6,800.0L661.0,800.0L660.1,800.0L660.1,800.0L658.6,800.0L657.1,800.0L656.5,800.0L647.3,800.0L646.1,800.0L644.6,800.0L642.6,800.0L641.7,800.0L639.0,800.0L638.1,800.0L634.0,800.0L632.8,800.0L629.5,800.0L623.9,800.0L618.8,800.0L616.2,800.0L613.2,800.0L607.9,800.0L607.9,800.0L606.7,800.0L605.8,800.0L605.8,800.0L601.0,800.0L600.4,800.0L599.6,800.0L598.4,800.0L598.4,800.0L595.1,800.0L595.7,800.0L595.7,800.0L593.9,800.0L593.3,800.0L593.9,800.0L593.9,800.0L592.4,800.0L591.2,800.0L590.4,800.0L589.5,800.0L588.6,800.0L588.0,800.0L586.8,800.0L586.2,800.0L582.6,800.0L581.5,800.0L579.7,800.0L579.1,800.0L577.9,800.0L576.7,800.0L574.9,800.0L572.0,800.0L569.9,800.0L569.3,800.0L571.7,800.0L572.3,800.0L572.0,800.0L569.9,800.0L566.3,800.0L563.7,800.0L564.0,800.0L564.8,800.0L565.7,800.0L566.0,800.0L562.8,800.0L557.7,800.0L555.9,800.0L555.6,800.0L555.9,800.0L555.3,800.0L553.6,800.0L553.0,800.0L550.9,800.0L548.8,800.0L547.9,800.0L547.3,800.0L547.6,800.0L548.8,800.0L548.5,800.0L547.9,800.0L540.5,800.0L534.3,800.0L533.4,800.0L535.8,800.0L534.9,800.0L529.5,800.0L523.6,800.0L523.9,800.0L521.5,800.0L519.7,800.0L513.8,800.0L514.4,800.0L512.9,800.0L507.3,800.0L505.8,800.0L504.3,800.0L501.6,800.0L498.7,800.0L495.7,800.0L488.9,800.0L488.0,800.0L483.3,800.0L482.1,800.0L480.0,800.0L476.7,800.0L473.5,800.0L469.9,800.0L467.2,800.0L461.9,800.0L463.1,800.0L464.0,800.0L465.4,800.0L463.4,800.0L454.2,800.0L451.5,800.0L448.8,800.0L442.9,800.0L435.8,800.0L434.9,800.0L436.1,800.0L435.2,800.0L432.2,800.0L431.0,800.0L428.1,800.0L429.0,800.0L425.1,800.0L426.0,800.0L425.1,800.0L422.1,800.0L422.1,800.0L421.8,800.0L422.7,800.0L423.9,800.0L424.5,800.0L423.9,800.0L422.7,800.0L421.2,800.0L417.1,800.0L415.9,800.0L417.1,800.0L416.5,800.0L415.0,800.0L413.5,800.0L411.7,800.0L409.1,800.0L408.5,800.0L407.0,800.0L406.1,800.0L401.7,800.0L400.5,800.0L400.5,800.0L401.4,800.0L397.8,800.0L393.9,800.0L401.4,800.0L400.8,800.0L400.5,800.0L398.1,800.0L396.3,800.0L396.3,800.0L394.5,800.0L394.5,800.0L393.9,800.0L395.7,800.0L395.7,800.0L394.5,800.0L392.8,800.0L392.2,800.0L391.3,800.0L390.7,800.0L390.1,800.0L388.9,800.0L388.3,800.0L383.3,800.0L383.9,800.0L387.7,800.0L388.6,800.0L390.1,800.0L391.3,800.0L389.5,800.0L389.2,800.0L390.1,800.0L393.4,800.0L394.8,800.0L396.3,800.0L398.7,800.0L398.7,800.0L396.9,800.0L395.7,800.0L393.1,800.0L393.4,800.0L393.4,800.0L390.4,800.0L386.8,800.0L388.6,800.0L384.5,800.0L382.1,800.0L383.9,800.0L384.8,800.0L385.6,800.0L383.9,800.0L379.4,800.0L377.6,800.0L381.5,800.0L383.3,800.0L384.5,800.0L382.1,800.0L380.6,800.0L379.4,800.0L377.0,800.0L373.8,800.0L370.8,800.0L369.9,800.0L371.1,800.0L371.1,800.0L369.6,800.0L367.8,800.0L365.2,800.0L362.8,800.0L361.6,800.0L360.4,800.0L358.3,800.0L357.5,800.0L355.4,800.0L354.5,800.0L351.8,800.0L351.2,800.0L353.9,800.0L349.4,800.0L343.8,800.0L342.9,800.0L340.8,800.0L339.4,800.0L337.0,800.0L336.1,800.0L333.7,800.0L331.3,800.0L329.6,800.0L327.5,800.0L324.5,800.0L321.3,800.0L318.6,800.0L315.3,800.0L311.5,800.0L310.0,800.0L308.8,800.0L305.5,800.0L299.6,800.0L301.4,800.0L302.9,800.0L299.9,800.0L300.2,800.0L299.9,800.0L298.1,800.0L298.1,800.0L298.7,800.0L296.3,800.0L290.1,800.0L285.7,800.0L283.9,800.0L281.2,800.0L278.2,800.0L275.3,800.0L273.8,800.0L270.8,800.0L267.6,800.0L263.7,800.0L260.7,800.0L256.9,800.0L258.4,800.0L260.7,800.0L248.9,800.0L241.5,800.0L241.5,800.0L240.6,800.0L238.8,800.0L236.1,800.0L237.0,800.0L240.6,800.0L243.5,800.0L245.6,800.0L243.8,800.0L243.8,800.0L243.2,800.0L241.5,800.0L239.1,800.0L237.3,800.0L235.8,800.0L232.5,800.0L230.2,800.0L229.6,800.0L227.8,800.0L229.0,800.0L223.9,800.0L222.2,800.0L220.4,800.0L219.8,800.0L218.0,800.0L216.2,800.0L212.7,800.0L207.3,800.0L206.1,800.0L205.3,800.0L201.7,800.0L199.9,800.0L197.5,800.0L197.5,800.0L196.4,800.0L194.9,800.0L195.5,800.0L198.1,800.0L198.1,800.0L195.5,800.0L190.1,800.0L184.2,800.0L177.1,800.0L171.7,800.0L159.0,800.0L150.4,800.0L146.8,800.0L142.7,800.0L140.0,800.0L132.9,800.0L124.0,800.0L123.4,800.0L124.6,800.0L122.2,800.0L111.5,800.0L108.5,800.0L103.8,800.0L99.6,800.0L99.0,800.0L95.5,800.0L91.9,800.0L89.5,800.0L87.2,800.0L86.3,800.0L85.1,800.0L80.1,800.0L78.0,800.0L72.6,800.0L71.2,800.0L74.1,800.0L76.5,800.0L75.6,800.0L72.6,800.0L71.4,800.0L70.6,800.0L69.7,800.0L67.6,800.0L65.8,800.0L61.1,800.0L59.3,800.0L59.9,800.0L59.3,800.0L57.5,800.0L55.7,800.0L52.5,800.0L51.9,800.0L50.7,800.0L47.7,800.0L45.0,800.0L44.4,800.0L44.7,800.0L45.9,800.0L45.9,800.0L44.2,800.0L43.9,800.0L42.4,800.0L41.2,800.0L40.6,800.0L41.5,800.0L42.7,800.0L40.6,800.0L39.4,800.0L38.8,800.0L37.6,800.0L36.7,800.0L35.8,800.0L35.0,800.0L34.4,800.0L33.5,800.0L32.9,800.0L31.4,800.0L30.8,800.0L29.0,800.0L30.2,800.0L29.6,800.0L28.7,800.0L27.5,800.0L26.1,800.0L25.8,800.0L25.2,800.0L22.5,800.0L22.5,800.0L24.6,800.0L25.8,800.0L26.9,800.0L26.6,800.0L27.5,800.0L27.8,800.0L28.4,800.0L29.6,800.0L28.7,800.0L30.2,800.0L31.1,800.0L32.0,800.0L31.4,800.0L32.6,800.0L35.5,800.0L37.9,800.0L39.1,800.0L40.9,800.0L39.4,800.0L42.1,800.0L42.7,800.0L44.4,800.0L44.7,800.0L44.4,800.0L46.5,800.0L46.5,800.0L48.9,800.0L50.1,800.0L53.1,800.0L52.2,800.0L53.3,800.0L53.9,800.0L53.1,800.0L62.5,800.0L85.4,800.0L108.8,800.0L123.4,800.0L141.5,800.0L145.9,800.0L163.4,800.0L179.4,800.0L189.8,800.0L198.1,800.0L202.3,800.0L216.8,800.0L240.6,800.0L261.3,800.0L266.7,789.5L272.3,774.9L275.9,766.9L286.8,760.0L302.9,750.5L303.5,750.2L299.3,745.0L281.2,722.8L263.1,700.6L262.5,699.9L262.2,699.2L240.9,675.2L229.9,663.1L222.5,649.9L260.1,638.3L285.4,630.3L303.8,624.7L337.9,614.4L375.0,603.3L387.1,599.2L398.7,588.4L399.6,588.1L400.2,587.9L416.5,590.8L449.1,596.5L472.3,600.6L504.6,608.0L517.7,616.0L532.2,624.9L546.7,633.9L561.3,642.8L575.5,651.8L590.1,660.7L604.6,669.7L618.8,678.6L633.4,687.4L646.1,697.0L660.1,709.5L674.0,722.2L689.7,736.4L699.2,745.0L714.1,758.0L728.6,770.5L743.2,782.8L762.1,799.0L780.8,800.0L790.3,800.0L809.3,800.0L826.5,800.0L842.2,800.0L856.5,800.0L857.4,800.0L858.6,800.0L872.5,800.0L885.9,800.0L900.7,800.0L917.6,800.0L934.5,800.0L951.4,800.0L966.3,800.0L978.7,800.0Z","JOR":"M120.1,525.6L121.0,525.1L121.9,525.6L131.4,528.7L133.8,530.7L135.2,530.7L135.5,531.5L135.2,532.7L135.8,533.6L137.3,534.6L140.3,534.6L140.6,537.3L141.5,540.8L145.6,547.9L145.9,548.4L148.0,548.4L151.6,548.1L153.0,548.4L154.2,547.4L155.7,547.7L163.7,554.3L172.0,562.1L178.3,563.1L182.7,564.3L196.9,568.0L200.2,567.2L206.4,568.7L221.0,559.1L242.6,544.5L263.4,531.0L285.1,516.7L309.7,500.6L331.1,487.0L368.7,462.8L376.1,490.0L382.7,514.8L392.2,550.3L385.6,552.6L389.8,567.2L391.3,569.2L408.5,565.8L411.5,575.6L399.3,587.4L398.7,588.4L387.1,599.2L375.0,603.3L337.9,614.4L303.8,624.7L285.4,630.3L260.1,638.3L222.5,649.9L229.9,663.1L240.9,675.2L262.2,699.2L262.5,699.9L263.1,700.6L281.2,722.8L299.3,745.0L303.5,750.2L302.9,750.5L286.8,760.0L275.9,766.9L272.3,774.9L266.7,789.5L261.3,800.0L240.6,800.0L216.8,800.0L202.3,800.0L198.1,800.0L189.8,800.0L179.4,800.0L163.4,800.0L145.9,800.0L141.5,800.0L123.4,800.0L108.8,800.0L85.4,800.0L62.5,800.0L54.5,800.0L55.7,800.0L55.7,800.0L53.9,800.0L54.8,800.0L56.9,800.0L57.8,800.0L62.0,800.0L62.8,800.0L63.4,800.0L64.9,796.6L69.7,787.7L67.9,778.4L68.5,773.8L70.0,767.4L70.9,765.2L70.9,762.4L69.4,759.3L70.6,752.9L74.7,738.2L80.1,725.6L80.6,722.0L81.8,720.0L83.9,717.8L83.9,713.2L85.4,708.7L88.7,705.5L89.5,700.6L93.7,689.6L93.7,684.0L91.6,679.6L90.4,674.2L92.5,669.7L91.9,666.8L94.9,659.9L95.5,656.7L95.5,650.7L95.5,650.7L96.1,643.1L99.0,631.5L103.8,623.4L102.0,617.3L100.8,608.0L101.7,607.0L102.6,606.3L102.3,604.5L102.0,602.3L100.8,598.9L101.1,592.5L101.7,590.1L103.2,586.4L102.6,585.2L103.8,584.6L103.5,582.5L105.0,576.3L103.8,575.6L104.4,575.1L104.1,573.6L104.1,569.9L103.5,567.2L103.2,563.3L103.8,562.4L104.4,563.3L103.8,561.6L103.2,560.4L102.6,559.1L103.8,558.6L103.2,557.7L103.8,557.0L103.5,556.5L104.4,555.7L104.4,554.7L105.0,553.7L104.4,553.3L103.8,553.0L104.4,551.6L105.6,550.8L104.7,549.4L104.1,548.1L103.2,548.1L104.4,547.4L103.8,544.7L104.7,544.4L105.0,544.4L105.3,544.5L105.0,542.7L104.4,539.3L105.0,538.5L104.1,537.4L103.8,535.9L104.7,535.2L106.8,532.9L110.0,532.0L114.2,528.8L120.1,525.6Z","EGY":"M-4.2,678.8L-0.1,692.1L5.6,709.3L14.8,734.8L16.9,747.0L18.6,750.5L19.5,753.1L18.6,757.8L19.2,760.0L24.6,765.6L32.3,788.5L35.8,798.7L35.8,799.8L36.4,800.0L43.3,800.0L45.0,800.0L47.7,800.0L47.4,800.0L46.2,800.0L45.0,800.0L44.4,800.0L43.6,800.0L43.3,800.0L42.4,800.0L42.1,800.0L42.1,800.0L39.4,800.0L38.2,800.0L37.3,800.0L36.7,800.0L36.7,800.0L35.8,800.0L35.0,800.0L32.9,800.0L32.3,800.0L30.8,800.0L30.8,800.0L32.0,800.0L31.1,800.0L28.4,800.0L28.4,800.0L26.4,800.0L26.9,800.0L26.6,800.0L27.5,800.0L26.9,800.0L26.4,800.0L25.8,800.0L23.4,800.0L18.9,800.0L17.7,800.0L18.3,800.0L15.7,800.0L14.2,800.0L13.3,800.0L11.8,800.0L10.6,800.0L9.1,800.0L9.1,800.0L10.0,800.0L10.0,800.0L11.8,800.0L12.4,800.0L11.5,800.0L11.8,800.0L11.2,800.0L8.3,800.0L7.7,800.0L6.5,800.0L5.3,800.0L3.5,800.0L2.9,800.0L2.6,800.0L0.8,800.0L-0.6,800.0L-1.8,800.0L-3.0,800.0L-3.3,800.0L-6.0,800.0L-7.2,800.0L-6.6,800.0L-4.2,800.0L-3.3,800.0L-3.9,800.0L-3.9,800.0L-4.2,800.0L-6.0,800.0L-8.4,800.0L-10.4,800.0L-20.2,800.0L-26.2,800.0L-31.5,800.0L-33.6,800.0L-35.7,800.0L-37.1,800.0L-40.7,800.0L-41.3,800.0L-42.2,800.0L-44.3,800.0L-49.3,800.0L-51.7,800.0L-52.3,800.0L-52.9,800.0L-53.8,800.0L-54.9,800.0L-56.7,800.0L-57.9,800.0L-60.6,800.0L-71.9,800.0L-74.2,800.0L-76.6,800.0L-82.4,800.0L-82.4,798.8L-81.1,800.0L-79.6,800.0L-77.8,800.0L-76.3,800.0L-70.7,800.0L-63.0,800.0L-61.5,800.0L-59.4,800.0L-58.8,800.0L-58.8,800.0L-60.9,800.0L-65.0,800.0L-67.4,800.0L-67.4,800.0L-65.0,800.0L-64.1,800.0L-61.8,800.0L-61.5,800.0L-63.0,800.0L-62.1,800.0L-60.3,800.0L-59.4,800.0L-58.2,800.0L-61.2,800.0L-61.5,800.0L-61.8,800.0L-63.8,800.0L-66.2,800.0L-63.0,800.0L-60.9,800.0L-59.7,800.0L-54.9,800.0L-54.3,800.0L-52.3,800.0L-51.4,800.0L-50.2,800.0L-44.3,800.0L-39.2,800.0L-37.7,800.0L-38.3,800.0L-39.2,800.0L-38.0,800.0L-35.7,800.0L-33.0,800.0L-33.6,800.0L-31.2,800.0L-29.4,800.0L-27.6,800.0L-25.6,800.0L-24.4,800.0L-26.5,800.0L-27.9,800.0L-28.8,800.0L-29.4,800.0L-25.9,800.0L-23.5,800.0L-19.9,800.0L-16.1,800.0L-13.1,800.0L-10.1,800.0L-0.1,800.0L9.7,800.0L11.2,800.0L19.5,800.0L27.5,800.0L30.5,800.0L32.9,800.0L37.0,800.0L38.2,800.0L41.8,800.0L52.8,800.0L53.9,800.0L56.9,800.0L57.5,800.0L58.4,800.0L60.8,800.0L64.3,800.0L66.7,800.0L69.7,800.0L69.7,800.0L77.1,800.0L89.8,800.0L95.2,800.0L99.6,800.0L98.4,800.0L100.8,800.0L106.2,800.0L107.6,800.0L112.7,800.0L116.8,800.0L119.8,800.0L123.1,800.0L121.3,800.0L118.3,800.0L114.2,800.0L110.9,800.0L108.2,800.0L105.6,800.0L104.1,800.0L101.7,800.0L99.3,800.0L97.6,800.0L97.3,800.0L97.6,800.0L99.6,800.0L99.6,800.0L99.0,800.0L98.4,800.0L100.8,800.0L102.9,800.0L102.9,800.0L104.4,800.0L108.8,800.0L111.5,800.0L113.3,800.0L118.3,800.0L119.5,800.0L118.9,800.0L120.7,800.0L122.2,800.0L123.7,800.0L124.9,800.0L127.5,800.0L133.8,800.0L135.5,800.0L137.6,800.0L143.5,800.0L156.3,800.0L162.8,800.0L164.6,800.0L168.5,800.0L172.3,800.0L173.2,800.0L175.3,800.0L176.5,800.0L184.8,800.0L191.6,800.0L200.5,800.0L202.0,800.0L202.6,800.0L204.7,800.0L205.6,800.0L207.6,800.0L212.1,800.0L214.2,800.0L213.0,800.0L174.4,800.0L136.1,800.0L97.9,800.0L59.3,800.0L21.0,800.0L-17.3,800.0L-36.5,800.0L-74.8,800.0L-82.4,792.1L-82.4,785.7L-82.4,778.2L-82.4,768.3L-82.4,763.9L-82.4,753.6L-82.4,746.8L-82.4,737.9L-82.4,728.4L-82.4,721.5L-82.4,709.3L-82.4,698.2L-82.4,685.4L-82.4,668.8L-82.4,661.9L-82.4,642.1L-82.4,634.4L-82.4,641.6L-82.4,646.9L-82.4,647.7L-82.4,648.7L-82.4,649.6L-82.4,648.7L-82.4,647.9L-82.4,638.6L-82.4,638.4L-82.4,651.1L-82.4,652.4L-82.4,652.3L-82.4,656.3L-82.4,655.0L-82.4,657.2L-82.4,657.8L-82.4,660.9L-82.4,662.2L-82.4,662.7L-82.4,661.9L-82.4,661.9L-82.4,662.6L-82.4,663.6L-82.4,664.6L-82.4,666.5L-82.4,667.0L-82.4,669.0L-82.4,673.2L-82.4,676.2L-82.4,678.6L-82.4,680.3L-82.4,679.6L-82.4,681.1L-82.4,675.9L-82.4,678.1L-82.4,680.8L-82.4,687.7L-82.4,690.1L-82.4,690.6L-82.4,691.4L-82.4,692.6L-82.4,692.6L-82.4,693.8L-82.4,693.6L-82.4,691.3L-82.4,692.3L-82.4,694.3L-82.4,695.0L-82.4,696.2L-82.4,703.3L-82.4,704.3L-82.4,707.5L-82.4,709.0L-82.4,717.3L-82.4,716.3L-82.4,704.3L-82.4,699.0L-82.4,697.9L-82.4,687.9L-82.4,685.7L-82.4,681.0L-82.4,680.3L-82.4,678.6L-82.4,678.6L-82.4,674.2L-82.4,671.3L-82.4,670.5L-82.4,669.3L-82.4,668.5L-82.4,666.6L-82.4,671.5L-82.4,672.9L-82.4,674.4L-82.4,675.4L-82.4,676.2L-82.4,677.8L-82.4,676.2L-82.4,677.9L-82.4,677.9L-82.4,674.9L-82.4,675.6L-82.4,674.7L-82.4,673.5L-82.4,675.4L-82.4,676.2L-82.4,672.9L-82.4,672.5L-82.4,673.5L-82.4,672.2L-82.4,672.9L-82.4,671.3L-82.4,664.9L-82.4,657.8L-82.4,650.2L-82.4,654.0L-82.4,655.6L-82.4,650.9L-82.4,650.9L-82.4,653.8L-82.4,653.6L-82.4,641.3L-82.4,642.1L-82.4,648.9L-82.4,653.6L-82.4,654.0L-82.4,656.5L-82.4,657.3L-82.4,659.7L-82.4,661.0L-82.4,661.2L-82.4,659.5L-82.4,658.3L-82.4,661.2L-82.4,657.7L-82.4,655.6L-82.4,655.8L-82.4,657.2L-82.4,656.7L-82.4,657.2L-82.4,657.8L-82.4,657.7L-82.4,655.6L-82.4,655.6L-82.4,655.0L-82.4,654.6L-82.4,655.6L-82.4,655.6L-82.4,652.9L-82.4,651.4L-82.4,649.6L-82.4,648.6L-82.4,648.0L-82.4,648.6L-82.4,649.9L-82.4,650.7L-82.4,650.7L-82.4,649.6L-82.4,648.4L-82.4,648.4L-82.4,643.5L-82.4,641.1L-82.4,639.3L-82.4,642.0L-82.4,648.2L-82.4,655.0L-82.4,655.5L-82.4,647.5L-82.4,646.5L-82.4,650.6L-82.4,655.5L-82.4,660.0L-82.4,662.9L-82.4,663.9L-82.4,666.6L-82.4,670.0L-82.4,670.0L-82.4,664.8L-82.4,664.6L-82.4,663.9L-82.4,663.4L-82.4,662.6L-82.4,660.5L-82.4,658.0L-82.4,656.3L-82.4,650.9L-82.4,647.5L-82.4,647.5L-82.4,647.2L-82.4,647.5L-82.4,648.4L-82.4,648.6L-82.4,648.2L-82.4,649.6L-82.4,651.3L-82.4,655.0L-82.4,656.2L-82.4,657.2L-82.4,655.0L-82.4,654.3L-82.4,653.4L-82.4,655.6L-82.4,655.6L-82.4,655.5L-82.4,656.3L-82.4,657.7L-82.4,658.3L-82.4,659.2L-82.4,658.3L-82.4,659.0L-82.4,659.4L-82.4,660.5L-82.4,663.2L-82.4,663.9L-82.4,664.4L-82.4,663.9L-82.4,663.9L-82.4,664.6L-82.4,666.1L-82.4,666.8L-82.4,668.0L-82.4,669.3L-82.4,670.2L-82.4,672.4L-82.4,672.2L-82.4,671.9L-82.4,672.0L-82.4,672.5L-82.4,674.4L-82.4,675.1L-82.4,676.8L-82.4,676.1L-82.4,674.9L-82.4,676.4L-82.4,677.6L-82.4,678.6L-82.4,678.9L-82.4,679.5L-82.4,678.9L-82.4,679.3L-82.4,678.9L-82.4,681.3L-82.4,678.1L-82.4,677.6L-82.4,678.9L-82.4,678.1L-82.4,678.3L-82.4,679.5L-82.4,681.0L-82.4,680.3L-82.4,681.8L-82.4,682.5L-82.4,683.8L-82.4,686.5L-82.4,687.1L-82.4,685.9L-82.4,687.1L-82.4,688.2L-82.4,689.2L-82.4,689.9L-82.4,691.3L-82.4,692.1L-82.4,691.6L-82.4,692.6L-82.4,694.1L-82.4,694.0L-82.4,693.3L-82.4,691.8L-82.4,690.9L-82.4,691.9L-82.4,690.6L-82.4,689.8L-82.4,689.4L-82.4,688.6L-82.4,688.2L-82.4,687.4L-82.4,689.4L-82.4,689.2L-82.4,686.4L-82.4,683.0L-82.4,678.6L-82.4,675.1L-82.4,673.5L-82.4,672.0L-82.4,672.2L-82.4,670.7L-82.4,671.9L-82.4,672.9L-82.4,675.7L-82.4,677.4L-82.4,680.3L-82.4,685.2L-82.4,691.3L-82.4,693.8L-82.4,693.6L-82.4,688.1L-82.4,685.2L-82.4,685.2L-82.4,689.9L-82.4,692.8L-82.4,695.5L-82.4,695.7L-82.4,695.3L-82.4,695.3L-82.4,692.1L-82.4,689.9L-82.4,690.8L-82.4,692.1L-82.4,690.6L-82.4,689.2L-82.4,689.2L-82.4,691.3L-82.4,693.0L-82.4,694.5L-82.4,693.5L-82.4,692.1L-82.4,690.4L-82.4,689.2L-82.4,687.6L-82.4,687.2L-82.4,688.9L-82.4,689.6L-82.4,690.3L-82.4,689.9L-82.4,689.1L-82.4,685.5L-82.4,683.3L-82.4,682.5L-82.4,680.3L-82.4,681.6L-82.4,686.5L-82.4,688.7L-82.4,689.9L-82.4,689.4L-82.4,689.9L-82.4,692.3L-82.4,695.5L-82.4,693.8L-82.4,693.5L-82.4,693.5L-82.4,690.9L-82.4,690.6L-82.4,690.8L-82.4,692.1L-81.9,691.1L-82.2,690.1L-81.6,689.4L-82.4,689.2L-76.0,686.7L-73.6,686.2L-72.7,684.9L-71.9,685.2L-67.4,686.7L-60.0,687.9L-58.2,687.9L-53.8,688.2L-20.8,677.1L-6.3,672.4L-4.2,678.8ZM-76.0,681.0L-71.6,682.8L-69.8,684.5L-82.4,678.3L-78.1,680.5Z","W":898,"H":700};
+const RATES = {"ALP|DAM": [120.0, 180.0, 130.0, 195.0, 220.0, 330.0], "DAM|RAQ": [300.0, 450.0, 310.0, 460.0, 400.0, 600.0], "DAM|IDL": [120.0, 180.0, 130.0, 195.0, 220.0, 330.0], "DAM|HAS": [400.0, 600.0, 410.0, 615.0, 500.0, 750.0], "DAM|DEZ": [300.0, 450.0, 310.0, 460.0, 400.0, 600.0], "DAM|HMA": [110.0, 165.0, 120.0, 180.0, 210.0, 315.0], "DAM|HMS": [100.0, 150.0, 110.0, 160.0, 200.0, 300.0], "DAM|DRA": [80.0, 120.0, 90.0, 130.0, 180.0, 220.0], "DAM|SWE": [80.0, 120.0, 90.0, 130.0, 180.0, 220.0], "DAM|LAT": [180.0, 270.0, 190.0, 285.0, 280.0, 420.0], "DAM|TAR": [130.0, 195.0, 140.0, 210.0, 230.0, 340.0], "ALP|RAQ": [200.0, 300.0, 220.0, 320.0, 300.0, 450.0], "ALP|IDL": [80.0, 120.0, 90.0, 145.0, 180.0, 270.0], "ALP|HAS": [250.0, 370.0, 280.0, 410.0, 350.0, 490.0], "ALP|DEZ": [400.0, 600.0, 410.0, 610.0, 500.0, 750.0], "ALP|HMA": [100.0, 150.0, 110.0, 165.0, 200.0, 300.0], "ALP|TAR": [180.0, 270.0, 190.0, 285.0, 280.0, 420.0], "ALP|HMS": [110.0, 165.0, 120.0, 180.0, 210.0, 315.0], "ALP|LAT": [140.0, 210.0, 150.0, 225.0, 240.0, 360.0], "IDL|RAQ": [220.0, 330.0, 230.0, 345.0, 320.0, 480.0], "HMS|RAQ": [280.0, 420.0, 290.0, 435.0, 380.0, 570.0], "HMA|RAQ": [280.0, 420.0, 290.0, 435.0, 380.0, 570.0], "HAS|IDL": [270.0, 400.0, 280.0, 420.0, 370.0, 550.0], "DEZ|IDL": [400.0, 600.0, 460.0, 680.0, 550.0, 775.0], "HMA|IDL": [110.0, 165.0, 120.0, 175.0, 210.0, 315.0], "HMS|IDL": [120.0, 180.0, 130.0, 190.0, 220.0, 320.0], "IDL|LAT": [140.0, 210.0, 150.0, 225.0, 240.0, 360.0], "IDL|TAR": [180.0, 270.0, 190.0, 285.0, 280.0, 420.0], "DEZ|HMA": [400.0, 600.0, 410.0, 610.0, 500.0, 750.0], "DEZ|HMS": [450.0, 670.0, 460.0, 680.0, 550.0, 775.0], "HMA|TAR": [180.0, 265.0, 190.0, 285.0, 280.0, 420.0], "HMA|LAT": [180.0, 265.0, 190.0, 285.0, 280.0, 420.0], "HMA|HMS": [110.0, 165.0, 120.0, 180.0, 210.0, 315.0], "DRA|HMS": [160.0, 230.0, 170.0, 240.0, 260.0, 390.0], "DRA|SWE": [160.0, 230.0, 170.0, 240.0, 260.0, 390.0], "HMS|LAT": [180.0, 270.0, 190.0, 285.0, 280.0, 420.0], "HMS|TAR": [130.0, 195.0, 140.0, 210.0, 230.0, 340.0], "DAM|LEB": [100.0, 150.0, 120.0, 180.0, 200.0, 300.0]};
+
+/* ---------- reference data from the 2025 planning sheet ---------- */
+const CITIES = {
+  DAM:{en:"Damascus",ar:"دمشق",lat:33.513,lon:36.292,hub:1},
+  ALP:{en:"Aleppo",ar:"حلب",lat:36.202,lon:37.134,hub:1},
+  HMS:{en:"Homs",ar:"حمص",lat:34.731,lon:36.709,lab:"r"},
+  HMA:{en:"Hama",ar:"حماة",lat:35.131,lon:36.757},
+  IDL:{en:"Idlib",ar:"إدلب",lat:35.931,lon:36.633,lab:"l"},
+  LAT:{en:"Latakia",ar:"اللاذقية",lat:35.532,lon:35.791,lab:"l"},
+  TAR:{en:"Tartous",ar:"طرطوس",lat:34.889,lon:35.886,lab:"l"},
+  DRA:{en:"Daraa",ar:"درعا",lat:32.625,lon:36.106,lab:"l"},
+  SWE:{en:"Sweida",ar:"السويداء",lat:32.709,lon:36.566},
+  DEZ:{en:"Deir ez-Zor",ar:"دير الزور",lat:35.336,lon:40.141},
+  RAQ:{en:"Raqqa",ar:"الرقة",lat:35.952,lon:39.009},
+  HAS:{en:"Hassakeh",ar:"الحسكة",lat:36.502,lon:40.747},
+  QAM:{en:"Qamishli",ar:"القامشلي",lat:37.052,lon:41.227},
+  LEB:{en:"Beirut",ar:"بيروت",lat:33.894,lon:35.502,lab:"l",cc:"LB"},
+  JOR:{en:"Amman",ar:"عمّان",lat:31.954,lon:35.910,cc:"JO"},
+  KRI:{en:"Erbil",ar:"أربيل",lat:36.191,lon:44.009,cc:"KRI"},
+  DOH:{en:"Duhok",ar:"دهوك",lat:36.867,lon:42.988,cc:"KRI"}
+};
+const BASE_CITIES = JSON.parse(JSON.stringify(CITIES));
+const COUNTRIES = {"":{en:"Syria",ar:"سوريا"},LB:{en:"Lebanon",ar:"لبنان"},JO:{en:"Jordan",ar:"الأردن"},KRI:{en:"Kurdistan Region of Iraq",ar:"إقليم كردستان العراق"},TR:{en:"Türkiye",ar:"تركيا"},IQ:{en:"Iraq",ar:"العراق"}};
+function applyPlaces(ov){
+  Object.keys(CITIES).forEach(k=>delete CITIES[k]);
+  Object.assign(CITIES, JSON.parse(JSON.stringify(BASE_CITIES)));
+  Object.entries(ov||{}).forEach(([k,v])=>{ if(v&&v.hidden){ delete CITIES[k]; return; } CITIES[k]={...(CITIES[k]||{}),...v}; });
+}
+const AREA = {DAM:1,HMS:1,HMA:1,LAT:1,ALP:1,IDL:1,DRA:1,SWE:1,DEZ:1,RAQ:1,HAS:1,JOR:1,LEB:1,KRI:1,NES:1};
+const AREA_NAMES = {JOR:{en:"Jordan",ar:"الأردن"},LEB:{en:"Lebanon",ar:"لبنان"},KRI:{en:"Kurdistan Region of Iraq",ar:"إقليم كردستان العراق"},NES:{en:"North-East Syria",ar:"شمال شرق سوريا"}};
+/* road distance & hours from Damascus (Data sheet) */
+const ROAD = {DEZ:[451,5],LAT:[335,4],DRA:[108,1.5],ALP:[359,4],HMS:[164,2],HMA:[219,2.5],SWE:[108,1.2],LEB:[111,2.2],JOR:[203,2.5],RAQ:[436,5.5]};
+const VEHICLES = {car:{seats:4,rate:0},suv:{seats:4,rate:2},van:{seats:7,rate:4},pickup:{seats:2,rate:-1},own:{seats:4,rate:-1}};
+
+/* ---------- i18n ---------- */
+const I18N = {
+ en:{appName:"Movement Planner",appSub:"Shared NGO movements · Syria and cross-border",actingAs:"Acting for",chooseAgency:"Choose your agency",
+  tabMap:"Map",tabTrips:"Trip register",tabRequests:"Requests",tabAgencies:"Agencies",tabDash:"Dashboard",mvList:"List",tabAdmin:"Admin",
+  adminTitle:"Coordinator settings",adminSub:"Only the coordinator can see this tab.",adAgencies:"Agencies",adPlaces:"Locations on the map",
+  addPlace:"Add location",editPlace:"Edit location",placeCode:"Code (3–5 letters)",nameEn:"Name (English)",nameAr:"Name (Arabic)",lat:"Latitude",lon:"Longitude",
+  labelSide:"Label side",right:"Right",left:"Left",hubQ:"Main hub (bigger dot)",country:"Country",pickHint:"Click the map to set the position.",
+  builtIn:"Built-in",custom:"Added",hiddenPl:"Hidden",restore:"Restore",hide:"Hide",del:"Delete",sureQ:"Click again to confirm",usedIn:"used in",
+  pwLbl:"Password",pwHint:"Leave blank to keep the current password",pwDefault:"Default password",pwCustom:"Own password",contactsN:"contacts",
+  codeTaken:"That code already exists",badCoords:"Set a position on the map (or type latitude and longitude)",needName:"Add a name",cantDelSelf:"The coordinator agency can't be deleted",
+  offerTrip:"Offer a trip",postNeed:"I need a ride",export:"Export to Excel",
+  hint1:"Check what is already planned",hint2:"Offer the trips you already plan",hint3:"Request a free seat on someone else's trip",
+  upcoming:"Upcoming",week:"Next 7 days",past30:"Last 30 days",all:"All time",
+  onlySeats:"Only trips with free seats",allAgencies:"All agencies",anyCity:"Any city",anyStatus:"Any status",
+  trips:"trips",trip:"trip",noTrips:"No trips match",noTripsSub:"Change the dates or filters, or offer a new trip.",
+  loading:"Loading shared trips…",noDb:"Shared data isn't available in this view. Open the page signed in to claude.ai to see and add trips.",
+  readOnly:"You can view trips but not change them. Ask the owner of this page for Contributor access.",
+  legendSeats:"Free seats",legendPlanned:"Planned, full",legendDone:"Completed",legendRoute:"Line width = number of trips",
+  clearFilter:"Clear",routeFilter:"Route",cityFilter:"City",
+  planned:"Planned",completed:"Completed",cancelled:"Cancelled",overdue:"Needs closing",unknown:"No status",
+  pending:"Waiting",accepted:"Accepted",declined:"Declined",open:"Open",covered:"Covered",withdrawn:"Withdrawn",
+  free:"free",seats:"seats",seat:"seat",pax:"passengers",lead:"Lead agency",cargo:"Small cargo",
+  date:"Date",time:"Departure",from:"From",to:"To",route:"Route",status:"Status",cost:"Cost (USD)",comments:"Comments",vehicle:"Vehicle",capacity:"Seats in vehicle",
+  passengers:"Passengers",reimb:"Reimbursement",search:"Search comments, agency, city…",
+  car:"City car",suv:"SUV",van:"Minivan",pickup:"Pickup",own:"Agency vehicle",
+  newTrip:"Offer a trip",editTrip:"Edit trip",save:"Save trip",cancel:"Cancel",close:"Close",
+  returnTrip:"Also add the return trip",returnDate:"Return date",returnTime:"Return departure",
+  myPax:"Passengers from your agency",paxByAgency:"Passengers by agency",addAgency:"Add agency",
+  estimate:"Estimated taxi cost (2025 rates)",oneWay:"one way",perPax:"per passenger",useRate:"Use this cost",noRate:"No contracted rate for this route",
+  distance:"Distance",hours:"h",km:"km",approx:"approx.",
+  matchTitle:"Already planned on this route",matchSub:"Join instead of sending a second car:",needsTitle:"Agencies needing this route",
+  requestSeat:"Request a seat",requestOn:"Request a seat on this trip",seatsWanted:"Seats needed",names:"Traveller names (optional)",note:"Note for the lead agency",send:"Send request",
+  nTitle:"Needs your attention",nAllClear:"All clear — nothing needs you right now.",nGotIt:"Got it",nOpen:"Open",nReview:"Review",nRequestSeat:"Request seat",
+  nReq:"wants {n} seat(s) on your trip",nOverdue:"Trip date has passed — close it",nAccepted:"accepted your request",nDeclined:"declined your request",
+  nSoon:"Coming up",nToday:"today",nTomorrow:"tomorrow",nNeedMatch:"needs {n} seat(s) — your trip has room",nMyNeed:"A trip now matches your ride need",
+  nReimb:"Reimbursement still pending",nNew:"New",notifications:"Notifications",nG_action:"To do",nG_info:"Updates",dropAt:"Drop-off point",dropEnd:"Final destination",onRoute:"On the way",otherPl:"Other places (detour)",dropTo:"drop-off at",stops:"Drop-off stops",detourNote:"Not on the direct route, the lead agency will confirm.",
+  needTitle:"Post a ride need",needSub:"Tell other agencies you need seats. Trip leads on this route will see it.",flex:"Flexible by",days:"days",postNeedBtn:"Post need",
+  incoming:"Requests for your trips",mine:"Your agency's requests",needs:"Open ride needs",
+  accept:"Accept",decline:"Decline",withdraw:"Withdraw",markCovered:"Mark covered",
+  noIncoming:"No seat requests for your agency's trips.",noMine:"Your agency hasn't requested any seats.",noNeeds:"No open ride needs.",
+  pickAgencyFirst:"Choose the agency you are acting for (top of the page) to see and answer requests.",
+  matchingTrips:"Matching trips",noMatching:"No matching trip yet.",
+  details:"Trip details",costSplit:"Cost split",share:"Share",
+  markDone:"Mark completed",markCancelled:"Mark cancelled",edit:"Edit",delete:"Delete trip",confirmDelete:"Delete this trip for everyone?",yesDelete:"Yes, delete",
+  leadContact:"Lead agency contact",requestsOnTrip:"Seat requests",postedBy:"Posted by",
+  onlyLead:"Only the lead agency can confirm requests and edit this trip.",
+  notEnough:"Not enough free seats left on this trip.",
+  directory:"Agency directory",prospects:"Agencies to invite",areas:"Works in",contacts:"Contacts",focal:"Focal point",management:"Management",backup:"Backup",
+  copy:"Copy",copied:"Copied",editAgency:"Edit agency",newAgency:"Add agency",code:"Code",name:"Name",role:"Role",email:"Email",phone:"Phone",addContact:"Add contact",remove:"Remove",
+  saved:"Saved",sent:"Request sent",posted:"Need posted",deleted:"Deleted",failed:"Couldn't save. Check your connection and try again.",
+  period:"Period",last90:"Last 90 days",
+  kTrips:"Trips completed",kAvg:"Average passengers per trip",kFill:"Seats filled",kShared:"Trips shared between agencies",kCancel:"Cancelled",kMissed:"Missed sharing chances",kMissedSub:"Same route, same day, different agencies",kCost:"Recorded trip costs",kOverdue:"Planned trips to close",
+  byMonth:"Trips per month",topRoutes:"Busiest routes",byAgency:"Trips led by agency",soloVsShared:"Seats used vs. empty",
+  required:"Fill in date, from and to.",sameCity:"From and To must be different.",
+  exportFail:"Export isn't available in this view.",
+  none:"—",yes:"Yes",no:"No",paid:"Paid",
+  readOnlyShort:"View only",emailLbl:"Organisation email",emailHint:"Admin: type admin",forgot:"Forgot password?",resetSent:"Password reset email sent — check your inbox.",needEmail:"Type your email first.",
+  noAgencyLink:"This email isn't linked to an organisation yet. Ask the admin to add it.",tooMany:"Too many attempts. Wait a few minutes and try again.",netErr:"Can't reach the server. Check your connection.",
+  setupTitle:"Database not connected",setupBody:"Paste your Firebase settings into FIREBASE_CONFIG in index.html, then reload.",dbErr:"Can't load data from the database. You may not have access yet — ask the admin.",
+  loginEmails:"Sign-in emails",loginEmailsHint:"One per line. Create each account first in Firebase → Authentication, then add it here.",adminRole:"Admin",signingIn:"Signing in…",signedIn:"Signed in as",logout:"Switch user",coordinator:"Coordinator",agencyUser:"Agency",loginTitle:"Sign in",loginLede:"Sign in with your organisation email and password.",username:"Organisation",password:"Password",signIn:"Sign in",badLogin:"Wrong organisation or password.",demoUsers:"Prototype: preview as",demoNote:"Data is saved in this browser only. Open several tabs and sign in as different organisations to test requests between them.",protoBanner:"Prototype: data is saved in this browser only, so other organisations cannot see it yet.",resetData:"Reset demo data",resetConfirm:"Delete everything in this browser and reload the starting data?",sampleTag:"Sample",allRequests:"All seat requests",ownOnly:"You can only edit your own organisation.",saveBtn:"Save",reimbPending:"Pending payment",fillNote:"Older trips have no vehicle size; 4 seats assumed."
+ },
+ ar:{appName:"مخطط التنقلات",appSub:"تنقلات مشتركة بين المنظمات · سوريا والحدود",actingAs:"أعمل لصالح",chooseAgency:"اختر منظمتك",
+  tabMap:"الخريطة",tabTrips:"سجل الرحلات",tabRequests:"الطلبات",tabAgencies:"المنظمات",tabDash:"لوحة المؤشرات",mvList:"القائمة",tabAdmin:"الإدارة",
+  adminTitle:"إعدادات المنسق",adminSub:"هذا التبويب يظهر للمنسق فقط.",adAgencies:"المنظمات",adPlaces:"المواقع على الخريطة",
+  addPlace:"أضف موقعاً",editPlace:"تعديل الموقع",placeCode:"الرمز (3–5 أحرف)",nameEn:"الاسم (بالإنكليزية)",nameAr:"الاسم (بالعربية)",lat:"خط العرض",lon:"خط الطول",
+  labelSide:"جهة الاسم",right:"يمين",left:"يسار",hubQ:"مركز رئيسي (نقطة أكبر)",country:"البلد",pickHint:"انقر على الخريطة لتحديد الموقع.",
+  builtIn:"أساسي",custom:"مضاف",hiddenPl:"مخفي",restore:"استعادة",hide:"إخفاء",del:"حذف",sureQ:"انقر مرة أخرى للتأكيد",usedIn:"مستخدم في",
+  pwLbl:"كلمة المرور",pwHint:"اتركها فارغة للإبقاء على كلمة المرور الحالية",pwDefault:"كلمة المرور الافتراضية",pwCustom:"كلمة مرور خاصة",contactsN:"جهات اتصال",
+  codeTaken:"هذا الرمز موجود مسبقاً",badCoords:"حدد الموقع على الخريطة (أو أدخل الإحداثيات)",needName:"أضف اسماً",cantDelSelf:"لا يمكن حذف منظمة المنسق",
+  offerTrip:"أضف رحلة",postNeed:"أحتاج رحلة",export:"تصدير إلى Excel",
+  hint1:"تحقق مما هو مخطط له",hint2:"أضف الرحلات التي تخطط لها",hint3:"اطلب مقعداً فارغاً في رحلة منظمة أخرى",
+  upcoming:"القادمة",week:"الأيام السبعة القادمة",past30:"آخر 30 يوماً",all:"كل الفترات",
+  onlySeats:"الرحلات التي فيها مقاعد فارغة فقط",allAgencies:"كل المنظمات",anyCity:"أي مدينة",anyStatus:"أي حالة",
+  trips:"رحلات",trip:"رحلة",noTrips:"لا توجد رحلات مطابقة",noTripsSub:"غيّر التواريخ أو الفلاتر، أو أضف رحلة جديدة.",
+  loading:"جارٍ تحميل الرحلات المشتركة…",noDb:"البيانات المشتركة غير متاحة هنا. افتح الصفحة بعد تسجيل الدخول إلى claude.ai لرؤية الرحلات وإضافتها.",
+  readOnly:"يمكنك عرض الرحلات دون تعديلها. اطلب من مالك الصفحة صلاحية مساهم.",
+  legendSeats:"مقاعد فارغة",legendPlanned:"مخطط لها، ممتلئة",legendDone:"منجزة",legendRoute:"سماكة الخط = عدد الرحلات",
+  clearFilter:"مسح",routeFilter:"المسار",cityFilter:"المدينة",
+  planned:"مخطط لها",completed:"منجزة",cancelled:"ملغاة",overdue:"بحاجة لإغلاق",unknown:"بلا حالة",
+  pending:"بانتظار الرد",accepted:"مقبول",declined:"مرفوض",open:"مفتوح",covered:"تمت التغطية",withdrawn:"مسحوب",
+  free:"فارغ",seats:"مقاعد",seat:"مقعد",pax:"ركاب",lead:"المنظمة المسؤولة",cargo:"شحنة صغيرة",
+  date:"التاريخ",time:"وقت الانطلاق",from:"من",to:"إلى",route:"المسار",status:"الحالة",cost:"التكلفة (دولار)",comments:"ملاحظات",vehicle:"المركبة",capacity:"عدد المقاعد في المركبة",
+  passengers:"الركاب",reimb:"التسديد",search:"ابحث في الملاحظات أو المنظمة أو المدينة…",
+  car:"سيارة صغيرة",suv:"دفع رباعي",van:"ميني فان",pickup:"بيك أب",own:"مركبة المنظمة",
+  newTrip:"أضف رحلة",editTrip:"تعديل الرحلة",save:"حفظ الرحلة",cancel:"إلغاء",close:"إغلاق",
+  returnTrip:"أضف رحلة العودة أيضاً",returnDate:"تاريخ العودة",returnTime:"وقت انطلاق العودة",
+  myPax:"عدد ركاب منظمتك",paxByAgency:"الركاب حسب المنظمة",addAgency:"أضف منظمة",
+  estimate:"التكلفة التقديرية للتاكسي (أسعار 2025)",oneWay:"ذهاب فقط",perPax:"للراكب",useRate:"استخدم هذه التكلفة",noRate:"لا يوجد سعر متعاقد عليه لهذا المسار",
+  distance:"المسافة",hours:"س",km:"كم",approx:"تقريباً",
+  matchTitle:"رحلات مخطط لها على هذا المسار",matchSub:"انضم بدلاً من إرسال سيارة ثانية:",needsTitle:"منظمات تحتاج هذا المسار",
+  requestSeat:"اطلب مقعداً",requestOn:"اطلب مقعداً في هذه الرحلة",seatsWanted:"عدد المقاعد المطلوبة",names:"أسماء المسافرين (اختياري)",note:"ملاحظة للمنظمة المسؤولة",
+  nTitle:"بحاجة لانتباهك",nAllClear:"لا يوجد ما يحتاجك الآن.",nGotIt:"حسناً",nOpen:"فتح",nReview:"مراجعة",nRequestSeat:"اطلب مقعداً",
+  nReq:"تطلب {n} مقعد/مقاعد في رحلتك",nOverdue:"انتهى موعد الرحلة — أغلقها",nAccepted:"قبلت طلبك",nDeclined:"رفضت طلبك",
+  nSoon:"قريباً",nToday:"اليوم",nTomorrow:"غداً",nNeedMatch:"تحتاج {n} مقعد/مقاعد — في رحلتك مكان",nMyNeed:"رحلة تطابق حاجتك للتنقل",
+  nReimb:"التسديد ما زال معلقاً",nNew:"جديد",notifications:"الإشعارات",nG_action:"مهام",nG_info:"تحديثات",dropAt:"نقطة النزول",dropEnd:"الوجهة النهائية",onRoute:"على الطريق",otherPl:"أماكن أخرى (تحويلة)",dropTo:"النزول في",stops:"نقاط النزول",detourNote:"ليست على الطريق المباشر، ستؤكد المنظمة المسؤولة.",send:"أرسل الطلب",
+  needTitle:"انشر حاجة لرحلة",needSub:"أخبر المنظمات الأخرى أنك تحتاج مقاعد. ستراها المنظمات التي تسير على هذا المسار.",flex:"مرونة",days:"أيام",postNeedBtn:"انشر",
+  incoming:"طلبات على رحلات منظمتك",mine:"طلبات منظمتك",needs:"احتياجات مفتوحة",
+  accept:"قبول",decline:"رفض",withdraw:"سحب",markCovered:"تمت التغطية",
+  noIncoming:"لا توجد طلبات مقاعد على رحلات منظمتك.",noMine:"لم تطلب منظمتك أي مقاعد.",noNeeds:"لا توجد احتياجات مفتوحة.",
+  pickAgencyFirst:"اختر المنظمة التي تعمل لصالحها (أعلى الصفحة) لرؤية الطلبات والرد عليها.",
+  matchingTrips:"رحلات مطابقة",noMatching:"لا توجد رحلة مطابقة بعد.",
+  details:"تفاصيل الرحلة",costSplit:"توزيع التكلفة",share:"الحصة",
+  markDone:"تحديد كمنجزة",markCancelled:"تحديد كملغاة",edit:"تعديل",delete:"حذف الرحلة",confirmDelete:"حذف هذه الرحلة للجميع؟",yesDelete:"نعم، احذف",
+  leadContact:"جهة اتصال المنظمة المسؤولة",requestsOnTrip:"طلبات المقاعد",postedBy:"أضافها",
+  onlyLead:"المنظمة المسؤولة فقط تستطيع تأكيد الطلبات وتعديل الرحلة.",
+  notEnough:"لا توجد مقاعد فارغة كافية في هذه الرحلة.",
+  directory:"دليل المنظمات",prospects:"منظمات يمكن دعوتها",areas:"مناطق العمل",contacts:"جهات الاتصال",focal:"نقطة الاتصال",management:"الإدارة",backup:"احتياطي",
+  copy:"نسخ",copied:"تم النسخ",editAgency:"تعديل المنظمة",newAgency:"إضافة منظمة",code:"الرمز",name:"الاسم",role:"الصفة",email:"البريد",phone:"الهاتف",addContact:"أضف جهة اتصال",remove:"إزالة",
+  saved:"تم الحفظ",sent:"تم إرسال الطلب",posted:"تم النشر",deleted:"تم الحذف",failed:"تعذّر الحفظ. تحقق من الاتصال وحاول مجدداً.",
+  period:"الفترة",last90:"آخر 90 يوماً",
+  kTrips:"رحلات منجزة",kAvg:"متوسط الركاب في الرحلة",kFill:"نسبة إشغال المقاعد",kShared:"رحلات مشتركة بين منظمات",kCancel:"ملغاة",kMissed:"فرص مشاركة ضائعة",kMissedSub:"نفس المسار ونفس اليوم ومنظمات مختلفة",kCost:"تكاليف الرحلات المسجلة",kOverdue:"رحلات مخطط لها بحاجة لإغلاق",
+  byMonth:"الرحلات شهرياً",topRoutes:"أكثر المسارات استخداماً",byAgency:"الرحلات حسب المنظمة المسؤولة",soloVsShared:"المقاعد المستخدمة والفارغة",
+  required:"أدخل التاريخ ومن وإلى.",sameCity:"يجب أن تختلف مدينة الانطلاق عن الوجهة.",
+  exportFail:"التصدير غير متاح هنا.",
+  none:"—",yes:"نعم",no:"لا",paid:"مسدد",
+  readOnlyShort:"عرض فقط",emailLbl:"البريد الإلكتروني للمنظمة",emailHint:"للمسؤول: اكتب admin",forgot:"نسيت كلمة المرور؟",resetSent:"أرسلنا رسالة لإعادة تعيين كلمة المرور.",needEmail:"اكتب بريدك أولاً.",
+  noAgencyLink:"هذا البريد غير مرتبط بأي منظمة بعد. اطلب من المسؤول إضافته.",tooMany:"محاولات كثيرة. انتظر بضع دقائق ثم حاول مجدداً.",netErr:"تعذر الاتصال بالخادم. تحقق من الاتصال.",
+  setupTitle:"قاعدة البيانات غير متصلة",setupBody:"ألصق إعدادات Firebase في FIREBASE_CONFIG داخل index.html ثم أعد التحميل.",dbErr:"تعذر تحميل البيانات. ربما لا تملك صلاحية بعد — تواصل مع المسؤول.",
+  loginEmails:"بريد تسجيل الدخول",loginEmailsHint:"بريد في كل سطر. أنشئ كل حساب أولاً في Firebase ← Authentication ثم أضفه هنا.",adminRole:"مسؤول",signingIn:"جارٍ تسجيل الدخول…",signedIn:"مسجل باسم",logout:"تبديل المستخدم",coordinator:"منسق",agencyUser:"منظمة",loginTitle:"تسجيل الدخول",loginLede:"سجّل الدخول ببريد منظمتك وكلمة المرور.",username:"المنظمة",password:"كلمة المرور",signIn:"دخول",badLogin:"المنظمة أو كلمة المرور غير صحيحة.",demoUsers:"نسخة تجريبية: الدخول باسم",demoNote:"تُحفظ البيانات في هذا المتصفح فقط. افتح عدة نوافذ وادخل بأسماء منظمات مختلفة لتجربة الطلبات بينها.",protoBanner:"نسخة تجريبية: البيانات محفوظة في هذا المتصفح فقط، ولا تراها المنظمات الأخرى بعد.",resetData:"إعادة البيانات التجريبية",resetConfirm:"حذف كل البيانات في هذا المتصفح وإعادة تحميل بيانات البداية؟",sampleTag:"مثال",allRequests:"كل طلبات المقاعد",ownOnly:"يمكنك تعديل منظمتك فقط.",saveBtn:"حفظ",reimbPending:"بانتظار التسديد",fillNote:"الرحلات القديمة بلا حجم مركبة؛ افترضنا 4 مقاعد."
+ }
+};
+let lang = "en";
+try{ lang = localStorage.getItem("mp-lang") || "en"; }catch(e){}
+const t = k => (I18N[lang][k] ?? I18N.en[k] ?? k);
+const cityName = c => CITIES[c] ? CITIES[c][lang] : (AREA_NAMES[c] ? AREA_NAMES[c][lang] : c);
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2,"0");
+const isoDay = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const TODAY = isoDay(new Date());
+const addDays = (iso,n)=>{const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return isoDay(d);};
+const dayDiff = (a,b)=>Math.round((new Date(a+"T12:00:00")-new Date(b+"T12:00:00"))/864e5);
+const loc = ()=> lang==="ar" ? "ar-SY-u-nu-latn" : "en-GB";
+const fmtDate = (iso,opts={weekday:"short",day:"numeric",month:"short",year:"numeric"}) => { try{return new Intl.DateTimeFormat(loc(),opts).format(new Date(iso+"T12:00:00"));}catch(e){return iso;} };
+const money = n => (n==null||isNaN(n)) ? t("none") : "$"+(Math.round(n*100)/100).toLocaleString("en-US",{maximumFractionDigits:2});
+const pairKey = (a,b)=>[a,b].sort().join("|");
+function effStatus(tr){
+  const s = tr.status||"";
+  if(s==="planned" && tr.date < TODAY) return "overdue";
+  if(!s) return "unknown";
+  return s;
+}
+const freeSeats = tr => Math.max(0,(+tr.seats||0)-(tr.pax||[]).length);
+const isOpenForSeats = tr => effStatus(tr)==="planned" && freeSeats(tr)>0;
+function road(a,b){
+  if(a==="DAM"&&ROAD[b]) return {km:ROAD[b][0],h:ROAD[b][1],exact:true};
+  if(b==="DAM"&&ROAD[a]) return {km:ROAD[a][0],h:ROAD[a][1],exact:true};
+  const A=CITIES[a],B=CITIES[b]; if(!A||!B) return null;
+  const R=6371,toR=x=>x*Math.PI/180,dLat=toR(B.lat-A.lat),dLon=toR(B.lon-A.lon);
+  const h=Math.sin(dLat/2)**2+Math.cos(toR(A.lat))*Math.cos(toR(B.lat))*Math.sin(dLon/2)**2;
+  const km=Math.round(2*R*Math.asin(Math.sqrt(h))*1.3);
+  return {km,h:Math.round(km/80*2)/2,exact:false};
+}
+function rate(a,b,veh){
+  const r=RATES[pairKey(a,b)]; const v=VEHICLES[veh||"car"]; if(!r||!v||v.rate<0) return null;
+  return r[v.rate] ?? null;
+}
+function paxCounts(tr){ const m={}; (tr.pax||[]).forEach(a=>m[a]=(m[a]||0)+1); return m; }
+function toast(msg){ const el=document.createElement("div"); el.className="toast"; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),2600); }
+
+/* ---------- state ---------- */
+const S = {
+  ready:false, dbOk:true, canWrite:null, uid:null,
+  trips:new Map(), requests:new Map(), needs:new Map(), agencies:new Map(), prospects:[],
+  myAgency:"", tab:"map", places:{},
+  map:{range:"upcoming",city:"",route:"",agency:"",seatsOnly:false,limit:120},
+  reg:{q:"",from:"",to:"",agency:"",status:"",limit:150,sort:"desc"},
+  dash:{period:"all"}
+};
+try{ S.tab = (location.hash||"").replace("#","")||"map"; }catch(e){}
+S.ready=false; S.canWrite=true; S.dbOk=true; S.admin=false; S.user=null; S.email=null;
+if(!["map","trips","requests","agencies","dash","admin"].includes(S.tab)) S.tab="map";
+let db=null, userNs=null, profiles={};
+
+const agencyCodes = ()=>{
+  const set=new Set([...S.agencies.keys()]);
+  S.trips.forEach(tr=>{ if(tr.lead) set.add(tr.lead); (tr.pax||[]).forEach(p=>set.add(p)); });
+  return [...set].filter(Boolean).sort();
+};
+const agencyName = c => (S.agencies.get(c)?.name) || c;
+
+/* ---------- chrome ---------- */
+function applyLang(){
+  document.documentElement.lang = lang; document.documentElement.dir = lang==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  $("#lang-en").setAttribute("aria-pressed",lang==="en"); $("#lang-ar").setAttribute("aria-pressed",lang==="ar");
+}
+function renderActing(){
+  const w=$("#who"); if(!w||!S.user) return;
+  const agN=S.myAgency?(S.agencies.get(S.myAgency)?.name||""):"";
+  w.innerHTML=`<span class="lbl">${esc(t("signedIn"))}</span><span class="who-id"><b>${esc(S.user)}</b>${agN?`<span class="who-name">${esc(agN)}</span>`:""}<span class="who-mail" dir="ltr">${esc(S.email||"")}</span></span><span class="role">${esc(S.admin?t("adminRole"):t("agencyUser"))}</span><button class="btn small" data-act="logout">${esc(t("logout"))}</button>`;
+}
+const ic = p => '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>';
+const ICONS = {
+  map: ic('<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>'),
+  trips: ic('<path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/>'),
+  requests: ic('<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>'),
+  agencies: ic('<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>'),
+  dash: ic('<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>'),
+  admin: ic('<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>'),
+  plus: ic('<path d="M5 12h14"/><path d="M12 5v14"/>'),
+  search: ic('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>')
+};
+function renderTabs(){
+  const inc = incomingRequests().filter(r=>r.status==="pending").length;
+  const openNeeds = [...S.needs.values()].filter(n=>n.status==="open" && n.date>=TODAY).length;
+  const tabs=[["map","tabMap"],["trips","tabTrips"],["requests","tabRequests",inc+openNeeds],["agencies","tabAgencies"],["dash","tabDash"]].concat(S.admin?[["admin","tabAdmin"]]:[]);
+  const canW = S.canWrite!==false && S.dbOk;
+  const acts = canW?`<button class="btn" data-act="need">${ICONS.search}${esc(t("postNeed"))}</button><button class="btn primary" data-act="new-trip">${ICONS.plus}${esc(t("offerTrip"))}</button>`:"";
+  $("#tabs").innerHTML = tabs.map(([id,k,b])=>`<button class="tab" role="tab" data-tab="${id}" aria-selected="${S.tab===id}">${ICONS[id]}<span>${esc(t(k))}</span>${b?`<span class="badge">${b}</span>`:""}</button>`).join("") + `<div class="tab-actions">${acts}</div>`;
+  $("#fab").innerHTML = acts;
+}
+function renderBanner(){ $("#banner").innerHTML = S.dbOk ? "" : `<div class="banner">${esc(t("dbErr"))}</div>`; }
+function render(){
+  renderTabs(); renderBanner();
+  const v=$("#view");
+  if(!S.ready && S.dbOk){ v.innerHTML=`<div class="panel empty"><b>${esc(t("loading"))}</b></div>`; return; }
+  if(S.tab==="admin"&&!S.admin) S.tab="map";
+  renderBell(); if(S.notifyOpen) renderNotify();
+  (({map:renderMap,trips:renderRegister,requests:renderRequests,agencies:renderAgencies,dash:renderDash,admin:renderAdmin})[S.tab]||renderMap)();
+}
+
+/* ---------- MAP ---------- */
+const K=100, CO=Math.cos(34.5*Math.PI/180);
+const proj = (lat,lon)=>[(lon-34.3)*K*CO,(38-lat)*K];
+function mapTrips(){
+  const m=S.map; let arr=[...S.trips.values()];
+  if(m.range==="upcoming") arr=arr.filter(x=>x.date>=TODAY && x.status!=="cancelled");
+  else if(m.range==="week") arr=arr.filter(x=>x.date>=TODAY && x.date<=addDays(TODAY,7) && x.status!=="cancelled");
+  else if(m.range==="past30") arr=arr.filter(x=>x.date<TODAY && x.date>=addDays(TODAY,-30));
+  if(m.agency) arr=arr.filter(x=>x.lead===m.agency || (x.pax||[]).includes(m.agency));
+  if(m.seatsOnly) arr=arr.filter(isOpenForSeats);
+  return arr;
+}
+function renderMap(){
+  const m=S.map; const base=mapTrips();
+  let list=base;
+  if(m.city) list=list.filter(x=>x.from===m.city||x.to===m.city);
+  if(m.route) list=list.filter(x=>pairKey(x.from,x.to)===m.route);
+  list.sort((a,b)=> m.range==="past30"||m.range==="all" ? (b.date+b.time).localeCompare(a.date+a.time) : (a.date+a.time).localeCompare(b.date+b.time));
+  const ranges=["upcoming","week","past30","all"]; const mv=S.mapView||"list";
+  const fl=(m.city||m.route)? (m.route? t("routeFilter")+": "+m.route.split("|").map(cityName).join(" ↔ ") : t("cityFilter")+": "+cityName(m.city)) : "";
+  $("#view").innerHTML = `
+  <ol class="hint"><li><b>1</b>${esc(t("hint1"))}</li><li><b>2</b>${esc(t("hint2"))}</li><li><b>3</b>${esc(t("hint3"))}</li></ol>
+  <div class="map-bar">
+    <div class="chips" role="group">${ranges.map(r=>`<button class="chip" data-range="${r}" aria-pressed="${m.range===r}">${esc(t(r))}</button>`).join("")}</div>
+    <select id="map-agency" aria-label="${esc(t("allAgencies"))}"><option value="">${esc(t("allAgencies"))}</option>${agencyCodes().map(c=>`<option${c===m.agency?" selected":""}>${esc(c)}</option>`).join("")}</select>
+    <label class="check"><input type="checkbox" id="seats-only"${m.seatsOnly?" checked":""}> ${esc(t("onlySeats"))}</label>
+  </div>
+  <div class="mview" role="group"><button type="button" data-mview="list" aria-pressed="${mv==="list"}">${ICONS.trips}${esc(t("mvList"))} · <span class="num">${list.length}</span></button><button type="button" data-mview="map" aria-pressed="${mv==="map"}">${ICONS.map}${esc(t("tabMap"))}</button></div>
+  <div class="map-layout" data-mview="${mv}">
+    <section class="panel map-panel map-pane">
+      ${mapSvg(base)}
+      ${fl?`<div class="map-note">${esc(fl)}<button class="btn small" data-act="clear-map">${esc(t("clearFilter"))}</button></div>`:""}
+      <div class="legend"><span><i style="background:var(--arc-seat)"></i>${esc(t("legendSeats"))}</span><span><i style="background:var(--arc-plan)"></i>${esc(t("legendPlanned"))}</span><span><i style="background:var(--arc-done)"></i>${esc(t("legendDone"))}</span><span>${esc(t("legendRoute"))}</span></div>
+    </section>
+    <section class="panel list-pane">
+      <div class="list-head"><h2>${esc(t(m.range))}</h2><span class="sub num">${list.length} ${esc(list.length===1?t("trip"):t("trips"))}</span>${fl?`<button class="chip" aria-pressed="true" data-act="clear-map" style="flex-basis:100%;justify-content:space-between">${esc(fl)} <span aria-hidden="true">✕</span></button>`:""}</div>
+      <div class="trip-list">${list.length? list.slice(0,m.limit).map(tripRow).join("") + (list.length>m.limit?`<div class="more"><button class="btn small" data-act="more-map">+ ${list.length-m.limit}</button></div>`:"") : `<div class="empty"><b>${esc(t("noTrips"))}</b>${esc(t("noTripsSub"))}</div>`}</div>
+    </section>
+  </div>`;
+  queueTrucks();
+}
+let truckQ=new Set(), truckT=null;
+function queueTrucks(){
+  const svg=$(".map-svg"); if(!svg||!svg.getBoundingClientRect().width) return;
+  S.drawn=S.drawn||new Set();
+  svg.querySelectorAll("g[data-route]").forEach(g=>{ const k=g.dataset.route; if(!S.drawn.has(k)){ S.drawn.add(k); truckQ.add(k); } });
+  clearTimeout(truckT); truckT=setTimeout(runTrucks,350);
+}
+function runTrucks(){
+  const svg=$(".map-svg"); const q=[...truckQ]; truckQ.clear();
+  if(!svg||matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  q.slice(0,8).forEach((k,i)=>{ const p=svg.querySelector(`g[data-route="${k}"] .arc`); if(p&&!p.classList.contains("dim")) setTimeout(()=>spawnTruck(svg,p),i*300); });
+}
+function spawnTruck(svg,path){
+  if(!svg.isConnected) return;
+  const NS="http://www.w3.org/2000/svg", g=document.createElementNS(NS,"g"); g.setAttribute("class","truck");
+  g.innerHTML='<g transform="scale(1.15) translate(-12,-14)"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></g>';
+  svg.appendChild(g);
+  const L=path.getTotalLength(), dur=Math.min(3200,1400+L*4), t0=performance.now();
+  const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  (function step(now){
+    if(!g.isConnected) return;
+    const u=Math.min(1,Math.max(0,(now-t0)/dur)), d=ease(u)*L;
+    const a=path.getPointAtLength(d), b=path.getPointAtLength(Math.min(L,d+1)), c=path.getPointAtLength(Math.max(0,d-1));
+    const ang=Math.atan2(b.y-c.y,b.x-c.x)*180/Math.PI, flip=Math.abs(ang)>90;
+    g.setAttribute("transform",`translate(${a.x.toFixed(1)},${a.y.toFixed(1)}) rotate(${ang.toFixed(1)})${flip?" scale(1,-1)":""}`);
+    if(u<1) requestAnimationFrame(step); else { g.style.opacity="0"; setTimeout(()=>g.remove(),550); }
+  })(t0);
+}
+function mapSvg(trips){
+  const W=GEO.W,H=GEO.H, m=S.map;
+  const order=["EGY","SAU","CYP","TUR","IRQ","ISR","PSE","JOR","LBN"];
+  let s=`<svg class="map-svg" viewBox="40 60 ${W-40} ${H-90}" role="img" aria-label="Map of routes"><rect x="0" y="0" width="${W}" height="${H}" fill="var(--sea)"/>`;
+  s+=order.map(c=>GEO[c]?`<path class="c-other" d="${GEO[c]}"/>`:"").join("");
+  s+=`<path class="c-syr" d="${GEO.SYR}"/>`;
+  const cn=[["TURKEY","تركيا",37.25,36.0],["IRAQ","العراق",34.0,42.9],["JORDAN","الأردن",31.5,37.3],["LEBANON","لبنان",34.25,35.25],["SYRIA","سوريا",34.45,38.6]];
+  s+=cn.map(([en,ar,la,lo])=>{const[x,y]=proj(la,lo);return `<text class="cname" x="${x}" y="${y}" text-anchor="middle">${lang==="ar"?ar:en}</text>`}).join("");
+  // aggregate arcs
+  const agg={};
+  trips.forEach(tr=>{ if(!CITIES[tr.from]||!CITIES[tr.to]) return; const k=pairKey(tr.from,tr.to);
+    const a=agg[k]||(agg[k]={n:0,seats:0,planned:0}); a.n++; if(isOpenForSeats(tr)) a.seats+=freeSeats(tr); if(effStatus(tr)==="planned") a.planned++; });
+  const keys=Object.keys(agg).sort((a,b)=>agg[b].n-agg[a].n);
+  const maxN=Math.max(1,...keys.map(k=>agg[k].n));
+  let arcs="";
+  keys.slice().reverse().forEach(k=>{
+    const [a,b]=k.split("|"); const A=proj(CITIES[a].lat,CITIES[a].lon),B=proj(CITIES[b].lat,CITIES[b].lon);
+    const mx=(A[0]+B[0])/2,my=(A[1]+B[1])/2,dx=B[0]-A[0],dy=B[1]-A[1],len=Math.hypot(dx,dy)||1;
+    const off=Math.min(60,len*0.18); const cx=mx-dy/len*off, cy=my+dx/len*off;
+    const d=`M${A[0].toFixed(1)},${A[1].toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${B[0].toFixed(1)},${B[1].toFixed(1)}`;
+    const g=agg[k]; const col=g.seats?"var(--arc-seat)":g.planned?"var(--arc-plan)":"var(--arc-done)";
+    const w=(2+Math.sqrt(g.n/maxN)*9).toFixed(1);
+    const dim = (m.route && m.route!==k) || (m.city && a!==m.city && b!==m.city);
+    const tip=`${cityName(a)} ↔ ${cityName(b)}: ${g.n} ${t("trips")}${g.seats?` · ${g.seats} ${t("free")}`:""}`;
+    arcs+=`<g data-route="${k}"><path class="arc${dim?" dim":""}" d="${d}" stroke="${col}" stroke-width="${w}" stroke-opacity=".85"/><path class="arc-hit" d="${d}"><title>${esc(tip)}</title></path></g>`;
+  });
+  s+=arcs;
+  const used=new Set(); trips.forEach(tr=>{used.add(tr.from);used.add(tr.to);});
+  Object.entries(CITIES).forEach(([c,o])=>{
+    const [x,y]=proj(o.lat,o.lon); const left=o.lab==="l"; const r=o.hub?6:used.has(c)?5:3.5;
+    const cnt=trips.filter(tr=>tr.from===c||tr.to===c).length;
+    s+=`<g class="city${o.hub?" hub":""}${m.city===c?" sel":""}" data-city="${c}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}"/><text x="${(x+(left?-10:10)).toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="${left?"end":"start"}">${esc(o[lang])}</text>${cnt?`<text class="sub" x="${(x+(left?-10:10)).toFixed(1)}" y="${(y+17).toFixed(1)}" text-anchor="${left?"end":"start"}">${c} · ${cnt}</text>`:""}<title>${esc(o[lang])}</title></g>`;
+  });
+  return s+"</svg>";
+}
+function seatbar(tr){
+  const used=(tr.pax||[]).length, fr=freeSeats(tr); if(used+fr>12) return `<span class="num small">${used}/${tr.seats}</span>`;
+  return `<span class="seatbar" title="${used}/${tr.seats}">${"<i></i>".repeat(used)}${'<i class="free"></i>'.repeat(effStatus(tr)==="planned"?fr:0)}</span>`;
+}
+function stPill(s){ return `<span class="pill st-${s}">${esc(t(s))}</span>`; }
+function agChip(c){ return `<span class="ag${c&&c===S.myAgency?" me":""}">${esc(c||"?")}</span>`; }
+function tripRow(tr){
+  const st=effStatus(tr), fr=freeSeats(tr); const d=new Date(tr.date+"T12:00:00");
+  const others=[...new Set((tr.pax||[]).filter(p=>p!==tr.lead))];
+  return `<div class="trip" data-trip="${esc(tr.id)}" tabindex="0" role="button">
+    <div class="d"><b class="num">${d.getDate()}</b><small>${esc(fmtDate(tr.date,{month:"short"}))}</small></div>
+    <div style="min-width:0"><div class="route">${esc(cityName(tr.from))} <span class="arrow">→</span> ${esc(cityName(tr.to))}</div>
+      <div class="meta"><span class="num">${esc(tr.time||"--:--")}</span>${agChip(tr.lead)}${others.map(agChip).join("")}${tr.cargo?`<span class="ag" title="${esc(tr.cargo)}">${esc(t("cargo"))}</span>`:""}${seatbar(tr)}</div></div>
+    <div class="right">${stPill(st)}${st==="planned"&&fr?`<span class="small" style="color:var(--seat);font-weight:500">${fr} ${esc(t("free"))}</span>`:""}</div>
+  </div>`;
+}
+
+/* ---------- REGISTER ---------- */
+function regTrips(){
+  const r=S.reg; const q=r.q.trim().toLowerCase();
+  let arr=[...S.trips.values()];
+  if(r.from) arr=arr.filter(x=>x.from===r.from); if(r.to) arr=arr.filter(x=>x.to===r.to);
+  if(r.agency) arr=arr.filter(x=>x.lead===r.agency||(x.pax||[]).includes(r.agency));
+  if(r.status) arr=arr.filter(x=>effStatus(x)===r.status);
+  if(q) arr=arr.filter(x=>[x.lead,x.from,x.to,cityName(x.from),cityName(x.to),x.comments,x.cargo,(x.pax||[]).join(" "),x.date].join(" ").toLowerCase().includes(q));
+  arr.sort((a,b)=> r.sort==="asc" ? (a.date+a.time).localeCompare(b.date+b.time) : (b.date+b.time).localeCompare(a.date+a.time));
+  return arr;
+}
+function renderRegister(){
+  const r=S.reg, arr=regTrips(), cities=Object.keys(CITIES);
+  const usedCities=[...new Set([...S.trips.values()].flatMap(x=>[x.from,x.to]))].concat(cities).filter((c,i,a)=>a.indexOf(c)===i);
+  const sts=["planned","overdue","completed","cancelled","unknown"];
+  const overdueN=[...S.trips.values()].filter(x=>effStatus(x)==="overdue").length;
+  $("#view").innerHTML=`<section class="panel">
+   <div class="filters">
+     <input type="search" id="reg-q" placeholder="${esc(t("search"))}" value="${esc(r.q)}">
+     <select id="reg-from"><option value="">${esc(t("from"))}: ${esc(t("anyCity"))}</option>${usedCities.map(c=>`<option value="${c}"${c===r.from?" selected":""}>${esc(cityName(c))}</option>`).join("")}</select>
+     <select id="reg-to"><option value="">${esc(t("to"))}: ${esc(t("anyCity"))}</option>${usedCities.map(c=>`<option value="${c}"${c===r.to?" selected":""}>${esc(cityName(c))}</option>`).join("")}</select>
+     <select id="reg-agency"><option value="">${esc(t("allAgencies"))}</option>${agencyCodes().map(c=>`<option${c===r.agency?" selected":""}>${esc(c)}</option>`).join("")}</select>
+     <select id="reg-status"><option value="">${esc(t("anyStatus"))}</option>${sts.map(s=>`<option value="${s}"${s===r.status?" selected":""}>${esc(t(s))}</option>`).join("")}</select>
+     ${overdueN?`<button class="chip" data-act="show-overdue" aria-pressed="${r.status==="overdue"}">${esc(t("overdue"))} · ${overdueN}</button>`:""}
+     <span class="muted small num" style="margin-inline-start:auto">${arr.length} ${esc(t("trips"))}</span>
+     <button class="btn small" data-act="export">${esc(t("export"))}</button>
+   </div>
+   <div class="table-wrap"><table><thead><tr>
+     <th><button class="btn ghost small" data-act="sort" style="padding:0;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit">${esc(t("date"))} ${r.sort==="asc"?"↑":"↓"}</button></th><th>${esc(t("time"))}</th><th>${esc(t("route"))}</th><th>${esc(t("lead"))}</th><th>${esc(t("passengers"))}</th><th>${esc(t("seats"))}</th><th>${esc(t("cost"))}</th><th>${esc(t("status"))}</th><th>${esc(t("comments"))}</th>
+   </tr></thead><tbody>
+   ${arr.slice(0,r.limit).map(x=>{const pc=paxCounts(x);return `<tr data-trip="${esc(x.id)}">
+     <td class="num">${esc(fmtDate(x.date,{day:"2-digit",month:"short",year:"numeric"}))}</td><td class="num">${esc(x.time||"")}</td>
+     <td>${esc(cityName(x.from))} <span class="arrow">→</span> ${esc(cityName(x.to))}</td><td>${agChip(x.lead)}</td>
+     <td>${Object.entries(pc).map(([a,n])=>`${agChip(a)}${n>1?`<span class="num small"> ×${n}</span>`:""}`).join(" ")||t("none")}</td>
+     <td>${seatbar(x)}</td><td class="num">${x.cost!=null?money(x.cost):""}</td><td>${stPill(effStatus(x))}</td><td class="wrapcell">${esc(x.comments||"")}</td></tr>`}).join("")}
+   </tbody></table></div>
+   ${arr.length>r.limit?`<div class="more"><button class="btn small" data-act="more-reg">+ ${arr.length-r.limit}</button></div>`:""}
+   ${!arr.length?`<div class="empty"><b>${esc(t("noTrips"))}</b>${esc(t("noTripsSub"))}</div>`:""}
+  </section>`;
+}
+
+/* ---------- REQUESTS ---------- */
+const canManageTrip = tr => !!tr && (S.admin || tr.lead===S.myAgency);
+const canEditAgency = code => S.admin || code===S.myAgency;
+function incomingRequests(){ return [...S.requests.values()].filter(r=>{const tr=S.trips.get(r.tripId);return tr&&(S.admin||tr.lead===S.myAgency);}); }
+function matchingTripsFor(n){
+  return [...S.trips.values()].filter(tr=>tr.from===n.from&&tr.to===n.to&&isOpenForSeats(tr)&&Math.abs(dayDiff(tr.date,n.date))<=(+n.flex||0)&&tr.lead!==n.agency)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+}
+function reqRow(r,mode){
+  const tr=S.trips.get(r.tripId);
+  const route=tr?`${esc(cityName(tr.from))} <span class="arrow">→</span> ${esc(cityName(tr.to))} · <span class="num">${esc(fmtDate(tr.date,{day:"numeric",month:"short"}))} ${esc(tr.time||"")}</span>`:"?";
+  const acts = mode==="in" && r.status==="pending" ? `<button class="btn small primary" data-act="accept" data-id="${esc(r.id)}">${esc(t("accept"))}</button><button class="btn small" data-act="decline" data-id="${esc(r.id)}">${esc(t("decline"))}</button>`
+    : mode==="mine" && r.status==="pending" ? `<button class="btn small" data-act="withdraw-req" data-id="${esc(r.id)}">${esc(t("withdraw"))}</button>` : "";
+  return `<div class="card-row"><div class="row-top"><div>${agChip(r.agency)} <span class="num">×${r.seats}</span> · ${route}${dropLabel(r,tr)}</div>${stPill(r.status)}</div>
+   ${r.names?`<div class="small">${esc(r.names)}</div>`:""}${r.note?`<div class="small muted">“${esc(r.note)}”</div>`:""}${r.reason?`<div class="small muted">${esc(r.reason)}</div>`:""}
+   <div class="row-top"><span class="small muted">${r.sample?`<span class="sample">${esc(t("sampleTag"))}</span> `:""}${r.at?esc(fmtDate(r.at.slice(0,10),{day:"numeric",month:"short"})):""}</span><div class="row-actions">${tr?`<button class="btn small ghost" data-trip="${esc(tr.id)}">${esc(t("details"))}</button>`:""}${acts}</div></div></div>`;
+}
+function renderRequests(){
+  const inc=incomingRequests().sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1)||String(b.at).localeCompare(String(a.at)));
+  const mine=S.myAgency?[...S.requests.values()].filter(r=>r.agency===S.myAgency).sort((a,b)=>String(b.at).localeCompare(String(a.at))):[];
+  const needs=[...S.needs.values()].filter(n=>n.status==="open"&&n.date>=addDays(TODAY,-(+n.flex||0))).sort((a,b)=>a.date.localeCompare(b.date));
+  const canW=S.canWrite!==false;
+  $("#view").innerHTML=`
+  <div class="cols">
+    <section class="panel"><div class="list-head"><h2>${esc(S.admin?t("allRequests"):t("incoming"))}</h2></div>${inc.length?inc.map(r=>reqRow(r,"in")).join(""):`<div class="empty">${esc(t("noIncoming"))}</div>`}</section>
+    <section class="panel"><div class="list-head"><h2>${esc(t("needs"))}</h2>${canW?`<button class="btn small" data-act="need">${esc(t("postNeed"))}</button>`:""}</div>
+      ${needs.length?needs.map(n=>{const mt=matchingTripsFor(n);const own=n.agency===S.myAgency||S.admin;return `<div class="card-row">
+        <div class="row-top"><div>${n.sample?`<span class="sample">${esc(t("sampleTag"))}</span> `:""}${agChip(n.agency)} <span class="num">×${n.seats}</span> · ${esc(cityName(n.from))} <span class="arrow">→</span> ${esc(cityName(n.to))}</div>${stPill(n.status)}</div>
+        <div class="small num">${esc(fmtDate(n.date))}${+n.flex?` ± ${n.flex} ${esc(t("days"))}`:""}</div>${n.note?`<div class="small muted">“${esc(n.note)}”</div>`:""}
+        <div class="small"><b>${esc(t("matchingTrips"))}:</b> ${mt.length?mt.map(tr=>`<button class="btn small" data-trip="${esc(tr.id)}">${agChip(tr.lead)} <span class="num">${esc(fmtDate(tr.date,{day:"numeric",month:"short"}))}</span> · ${freeSeats(tr)} ${esc(t("free"))}</button>`).join(" "):`<span class="muted">${esc(t("noMatching"))}</span>`}</div>
+        ${own&&canW?`<div class="row-actions"><button class="btn small" data-act="need-covered" data-id="${esc(n.id)}">${esc(t("markCovered"))}</button><button class="btn small ghost" data-act="need-withdraw" data-id="${esc(n.id)}">${esc(t("withdraw"))}</button></div>`:""}
+      </div>`}).join(""):`<div class="empty">${esc(t("noNeeds"))}</div>`}</section>
+    <section class="panel"><div class="list-head"><h2>${esc(t("mine"))}</h2></div>${mine.length?mine.map(r=>reqRow(r,"mine")).join(""):`<div class="empty">${esc(t("noMine"))}</div>`}</section>
+  </div>`;
+}
+
+/* ---------- AGENCIES ---------- */
+function renderAgencies(){
+  const list=[...S.agencies.values()].sort((a,b)=>a.code.localeCompare(b.code));
+  const canW=S.canWrite!==false;
+  const kl={focal:t("focal"),management:t("management"),backup:t("backup")};
+  $("#view").innerHTML=`<div class="list-head" style="padding-inline:0"><h2>${esc(t("directory"))}</h2>${S.admin?`<button class="btn small" data-act="new-agency">+ ${esc(t("newAgency"))}</button>`:""}</div>
+  <div class="ag-grid">${list.map(a=>`<article class="panel ag-card">
+    <h3>${agChip(a.code)} ${esc(a.name||"")}</h3>
+    ${(a.areas||[]).length?`<div><div class="small muted">${esc(t("areas"))}</div><div class="areas">${a.areas.map(c=>`<span class="area" title="${esc(cityName(c))}">${esc(cityName(c))}</span>`).join("")}</div></div>`:""}
+    ${a.notes?`<div class="small muted">${esc(a.notes)}</div>`:""}
+    ${(a.contacts||[]).map(c=>`<div class="contact"><span class="k">${esc(kl[c.kind]||c.kind||"")}</span><b>${esc(c.name)}</b>${c.role?`<span class="muted">${esc(c.role)}</span>`:""}
+      ${c.email?`<span><span class="mono small">${esc(c.email)}</span><button class="copy" data-copy="${esc(c.email)}">${esc(t("copy"))}</button></span>`:""}
+      ${c.phone?`<span><span class="mono small" dir="ltr">${esc(c.phone)}</span><button class="copy" data-copy="${esc(c.phone)}">${esc(t("copy"))}</button></span>`:""}</div>`).join("")}
+    ${canEditAgency(a.code)?`<div><button class="btn small" data-act="edit-agency" data-id="${esc(a.code)}">${esc(t("edit"))}</button></div>`:""}
+  </article>`).join("")}</div>
+  ${S.prospects.length?`<section class="panel" style="margin-top:16px;padding:14px"><h3 style="font-size:14px;margin-bottom:8px">${esc(t("prospects"))}</h3><div class="chips">${S.prospects.map(p=>`<span class="ag">${esc(p)}</span>`).join("")}</div></section>`:""}`;
+}
+
+function scrollToList(){ const l=$(".list-pane"); if(l) window.scrollTo({top:l.getBoundingClientRect().top+scrollY-80,behavior:"smooth"}); }
+/* ---------- VIEW MODE ---------- */
+let VIEW="auto"; try{ VIEW=localStorage.getItem("mp-view")||"auto"; }catch(e){}
+const isNarrow=()=> VIEW==="phone" || (VIEW==="auto" && innerWidth<=1000);
+let MQ=null;
+function applyView(){
+  document.documentElement.classList.toggle("v-phone",VIEW==="phone");
+  document.documentElement.classList.toggle("v-desk",VIEW==="desktop");
+  if(!MQ){ MQ=[]; for(const sh of document.styleSheets){ let rules; try{ rules=sh.cssRules; }catch(e){ continue; }
+    for(const r of rules) if(r instanceof CSSMediaRule && /max-width/.test(r.media.mediaText)) MQ.push([r,r.media.mediaText]); } }
+  MQ.forEach(([r,o])=>{ r.media.mediaText = VIEW==="phone" ? "all" : VIEW==="desktop" ? "not all" : o; });
+  document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===VIEW)));
+  const vp=document.querySelector('meta[name="viewport"]'); if(vp) vp.content = VIEW==="desktop" ? "width=1280" : "width=device-width, initial-scale=1";
+}
+document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-view]"); if(!b) return; VIEW=b.dataset.view; try{ localStorage.setItem("mp-view",VIEW); }catch(e){} applyView(); if(S.user) render(); });
+applyView();
+
+/* ---------- NOTIFICATIONS ---------- */
+const seenKey=()=>"mp-seen-"+(S.email||S.user||"");
+const getSeen=()=>{ try{ return localStorage.getItem(seenKey())||""; }catch(e){ return ""; } };
+function notices(){
+  const me=S.myAgency, out=[], seen=getSeen(), tom=addDays(TODAY,1);
+  const mine=tr=>tr.lead===me;
+  const rt=tr=>`${esc(cityName(tr.from))} <span class="arrow">→</span> ${esc(cityName(tr.to))} · <span class="num">${esc(fmtDate(tr.date,{day:"numeric",month:"short"}))}</span>`;
+  incomingRequests().filter(r=>r.status==="pending").forEach(r=>{ const tr=S.trips.get(r.tripId); if(!tr) return;
+    out.push({g:"action",k:"req",ord:0,html:`${agChip(r.agency)} ${esc(t("nReq").replace("{n}",r.seats))}${r.dropoff&&r.dropoff!==tr.to?` (${esc(t("dropTo"))} ${esc(cityName(r.dropoff))})`:""}<div class="small muted">${rt(tr)}</div>`,
+      acts:`<button class="btn small primary" data-act="accept" data-id="${esc(r.id)}">${esc(t("accept"))}</button><button class="btn small" data-act="decline" data-id="${esc(r.id)}">${esc(t("decline"))}</button>`}); });
+  [...S.trips.values()].filter(tr=>(S.admin||mine(tr))&&effStatus(tr)==="overdue").sort((a,b)=>b.date.localeCompare(a.date)).forEach(tr=>{
+    out.push({g:"action",k:"overdue",ord:1,html:`${esc(t("nOverdue"))}<div class="small muted">${rt(tr)} · ${agChip(tr.lead)}</div>`,
+      acts:`<button class="btn small primary" data-act="n-status" data-s="completed" data-id="${esc(tr.id)}">${esc(t("completed"))}</button><button class="btn small" data-act="n-status" data-s="cancelled" data-id="${esc(tr.id)}">${esc(t("cancelled"))}</button>`}); });
+  [...S.needs.values()].filter(n=>n.status==="open"&&n.date>=TODAY&&n.agency!==me).forEach(n=>{
+    const tr=matchingTripsFor(n).find(mine); if(!tr) return;
+    out.push({g:"action",k:"need",ord:2,html:`${agChip(n.agency)} ${esc(t("nNeedMatch").replace("{n}",n.seats))}<div class="small muted">${rt(tr)} · ${freeSeats(tr)} ${esc(t("free"))}</div>`,
+      acts:`<button class="btn small" data-act="n-trip" data-id="${esc(tr.id)}">${esc(t("nOpen"))}</button>`}); });
+  [...S.needs.values()].filter(n=>n.status==="open"&&n.date>=TODAY&&n.agency===me).forEach(n=>{
+    const tr=matchingTripsFor(n)[0]; if(!tr) return;
+    out.push({g:"action",k:"myneed",ord:3,html:`${esc(t("nMyNeed"))}<div class="small muted">${rt(tr)} · ${agChip(tr.lead)} · ${freeSeats(tr)} ${esc(t("free"))}</div>`,
+      acts:`<button class="btn small seat" data-act="n-reqseat" data-id="${esc(tr.id)}">${esc(t("nRequestSeat"))}</button>`}); });
+  [...S.requests.values()].filter(r=>r.agency===me&&(r.status==="accepted"||r.status==="declined")&&r.decidedAt&&r.decidedAt>seen).forEach(r=>{ const tr=S.trips.get(r.tripId); if(!tr) return;
+    out.push({g:"info",k:r.status,ord:4,html:`<span class="pill st-${r.status}">${esc(t("nNew"))}</span> ${agChip(tr.lead)} ${esc(t(r.status==="accepted"?"nAccepted":"nDeclined"))}<div class="small muted">${rt(tr)}${r.reason?" · "+esc(r.reason):""}</div>`,
+      acts:`<button class="btn small" data-act="n-trip" data-id="${esc(tr.id)}">${esc(t("nOpen"))}</button>`}); });
+  [...S.trips.values()].filter(tr=>effStatus(tr)==="planned"&&(tr.date===TODAY||tr.date===tom)&&(mine(tr)||(tr.pax||[]).includes(me))).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).forEach(tr=>{
+    out.push({g:"info",k:"soon",ord:5,html:`${esc(t("nSoon"))} <b>${esc(t(tr.date===TODAY?"nToday":"nTomorrow"))}</b> ${esc(tr.time||"")}<div class="small muted">${rt(tr)} · ${agChip(tr.lead)}</div>`,
+      acts:`<button class="btn small" data-act="n-trip" data-id="${esc(tr.id)}">${esc(t("nOpen"))}</button>`}); });
+  [...S.trips.values()].filter(tr=>mine(tr)&&effStatus(tr)==="completed"&&tr.reimb==="pending").forEach(tr=>{
+    out.push({g:"info",k:"reimb",ord:6,html:`${esc(t("nReimb"))} · <span class="num">${money(tr.cost)}</span><div class="small muted">${rt(tr)}</div>`,
+      acts:`<button class="btn small" data-act="n-trip" data-id="${esc(tr.id)}">${esc(t("nOpen"))}</button>`}); });
+  return out.sort((a,b)=>a.ord-b.ord);
+}
+const N_ICON={req:ICONS.requests,overdue:ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),need:ICONS.search,myneed:ICONS.search,accepted:ic('<path d="M20 6 9 17l-5-5"/>'),declined:ic('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),soon:ICONS.trips,reimb:ic('<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>')};
+function renderBell(){
+  const b=$("#bell"); if(!b) return; if(!S.user){ b.hidden=true; return; }
+  const n=notices().filter(x=>x.g==="action"||x.k==="accepted"||x.k==="declined").length;
+  b.hidden=false; b.setAttribute("aria-label",t("notifications"));
+  b.innerHTML=`${ic('<path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>')}${n?`<span class="badge">${n}</span>`:""}`;
+}
+function renderNotify(){
+  const root=$("#notify-root"); if(!root) return;
+  if(!S.notifyOpen||!S.user){ root.innerHTML=""; return; }
+  const list=notices(); const groups=[["action",list.filter(x=>x.g==="action")],["info",list.filter(x=>x.g==="info")]].filter(g=>g[1].length);
+  root.innerHTML=`<div class="notify" role="dialog" aria-label="${esc(t("nTitle"))}">
+    <div class="notify-head"><div><h2>${esc(t("nTitle"))}</h2><span class="small muted">${esc(S.user)} · ${esc(fmtDate(TODAY,{weekday:"long",day:"numeric",month:"long"}))}</span></div><button class="btn ghost small" data-act="n-close" aria-label="${esc(t("close"))}">✕</button></div>
+    <div class="notify-body">${groups.length?groups.map(([g,items])=>`<div class="notify-g">${esc(t("nG_"+g))} <span class="num">${items.length}</span></div>${items.map(x=>`<div class="notify-item n-${x.k}"><span class="n-ic">${N_ICON[x.k]||""}</span><div class="n-txt">${x.html}</div><div class="row-actions n-acts">${x.acts}</div></div>`).join("")}`).join(""):`<div class="empty"><b>${esc(t("nAllClear"))}</b></div>`}</div>
+    <div class="notify-foot"><button class="btn primary" data-act="n-close">${esc(t("nGotIt"))}</button></div></div>`;
+}
+function closeNotify(){ S.notifyOpen=false; try{ localStorage.setItem(seenKey(), new Date().toISOString()); }catch(e){} renderNotify(); renderBell(); }
+function maybeNotify(){ if(S.notifiedFor===S.user) return; S.notifiedFor=S.user; setTimeout(()=>{ if(!S.user) return; if(notices().length){ S.notifyOpen=true; renderNotify(); } },700); }
+
+/* ---------- ADMIN ---------- */
+function geoSvg(cls,vb){
+  const W=GEO.W,H=GEO.H; let s=`<svg class="map-svg ${cls}" viewBox="${vb||`40 60 ${W-40} ${H-90}`}" role="img"><rect x="0" y="0" width="${W}" height="${H}" fill="var(--sea)"/>`;
+  s+=["EGY","SAU","CYP","TUR","IRQ","ISR","PSE","JOR","LBN"].map(c=>GEO[c]?`<path class="c-other" d="${GEO[c]}"/>`:"").join("");
+  return s+`<path class="c-syr" d="${GEO.SYR}"/>`;
+}
+function placeDots(sel){
+  return Object.entries(CITIES).map(([c,o])=>{const[x,y]=proj(o.lat,o.lon);const left=o.lab==="l";const isC=!BASE_CITIES[c];
+    return `<g class="city${o.hub?" hub":""}${c===sel?" sel":""}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${o.hub?6:isC?5:3.5}"${isC&&c!==sel?' style="fill:var(--color-accent-2-400);stroke:var(--color-accent-2-800)"':""}/><text x="${(x+(left?-10:10)).toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="${left?"end":"start"}">${esc(o[lang]||c)}</text></g>`;}).join("");
+}
+const tripsUsing = c => [...S.trips.values()].filter(x=>x.from===c||x.to===c).length;
+function renderAdmin(){
+  const ags=[...S.agencies.values()].sort((a,b)=>a.code.localeCompare(b.code));
+  const ov=S.places||{};
+  const all=[...new Set([...Object.keys(BASE_CITIES),...Object.keys(ov)])].map(c=>{const o=CITIES[c]||{...BASE_CITIES[c],...ov[c]};return {c,o,base:!!BASE_CITIES[c],hidden:!!(ov[c]&&ov[c].hidden),n:tripsUsing(c)};})
+    .sort((a,b)=>(a.hidden-b.hidden)||(a.base-b.base)||String(a.o.en).localeCompare(String(b.o.en)));
+  const rowBtns=(acts)=>`<div class="row-actions" style="justify-content:flex-end">${acts}</div>`;
+  $("#view").innerHTML=`
+  <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:18px"><h2 style="font-size:28px;text-transform:uppercase">${esc(t("adminTitle"))}</h2><span class="muted small">${esc(t("adminSub"))}</span></div>
+  <section class="panel" style="margin-bottom:20px">
+    <div class="list-head"><h2>${esc(t("adAgencies"))} <span class="sub num">· ${ags.length}</span></h2><button class="btn small primary" data-act="new-agency">${ICONS.plus}${esc(t("newAgency"))}</button></div>
+    <div class="table-wrap"><table class="admin-t"><thead><tr><th>${esc(t("code"))}</th><th>${esc(t("name"))}</th><th>${esc(t("areas"))}</th><th>${esc(t("contacts"))}</th><th>${esc(t("loginEmails"))}</th><th></th></tr></thead><tbody>
+    ${ags.map(a=>`<tr data-act="edit-agency" data-id="${esc(a.code)}"><td>${agChip(a.code)}${false?` <span class="role">${esc(t("coordinator"))}</span>`:""}</td><td style="white-space:normal">${esc(a.name||"")}</td>
+      <td class="wrapcell">${(a.areas||[]).map(cityName).map(esc).join(", ")}</td><td class="num">${(a.contacts||[]).length}</td>
+      <td class="small" style="white-space:normal">${(a.emails||[]).length?(a.emails||[]).map(esc).join("<br>"):`<span class="muted">—</span>`}</td>
+      <td>${rowBtns(`<button class="btn small" data-act="edit-agency" data-id="${esc(a.code)}">${esc(t("edit"))}</button>${true?`<button class="btn small danger" data-act="del-agency" data-id="${esc(a.code)}">${esc(t("del"))}</button>`:""}`)}</td></tr>`).join("")}
+    </tbody></table></div>
+  </section>
+  <section class="panel">
+    <div class="list-head"><h2>${esc(t("adPlaces"))} <span class="sub num">· ${Object.keys(CITIES).length}</span></h2><button class="btn small primary" data-act="new-place">${ICONS.plus}${esc(t("addPlace"))}</button></div>
+    <div class="admin-places">
+      <div class="admin-mini">${geoSvg("")}${placeDots("")}</svg></div>
+      <div class="admin-plist">${all.map(p=>`<div class="card-row" style="flex-direction:row;align-items:center;gap:12px;${p.hidden?"opacity:.55":""}">
+        <div style="flex:1;min-width:0"><div style="font-weight:500;display:flex;gap:8px;align-items:center;flex-wrap:wrap">${esc(p.o.en||p.c)} <span class="muted" lang="ar">${esc(p.o.ar||"")}</span></div>
+          <div class="small muted" style="display:flex;gap:6px 10px;flex-wrap:wrap;align-items:center"><span class="ag">${esc(p.c)}</span><span>${esc((COUNTRIES[p.o.cc||""]||{})[lang]||p.o.cc||"")}</span><span class="num" dir="ltr">${(+p.o.lat).toFixed(3)}, ${(+p.o.lon).toFixed(3)}</span>
+          ${p.hidden?`<span class="pill st-cancelled">${esc(t("hiddenPl"))}</span>`:p.base?`<span class="pill st-unknown">${esc(t("builtIn"))}</span>`:`<span class="pill st-open">${esc(t("custom"))}</span>`}${p.n?`<span>${esc(t("usedIn"))} ${p.n} ${esc(t("trips"))}</span>`:""}</div></div>
+        ${rowBtns(p.hidden?`<button class="btn small" data-act="restore-place" data-id="${p.c}">${esc(t("restore"))}</button>`:`<button class="btn small" data-act="edit-place" data-id="${p.c}">${esc(t("edit"))}</button><button class="btn small danger" data-act="del-place" data-id="${p.c}">${esc(p.base?t("hide"):t("del"))}</button>`)}
+      </div>`).join("")}</div>
+    </div>
+  </section>`;
+}
+function placeForm(code){
+  const o=code?(CITIES[code]||{}):{en:"",ar:"",lat:"",lon:"",lab:"",cc:"",hub:0};
+  const body=`<div class="grid2">
+    <div class="field"><label for="p-code">${esc(t("placeCode"))}</label><input id="p-code" maxlength="5" value="${esc(code||"")}"${code?" disabled":""} style="text-transform:uppercase"></div>
+    <div class="field"><label for="p-cc">${esc(t("country"))}</label><select id="p-cc">${Object.entries(COUNTRIES).map(([k,v])=>`<option value="${k}"${k===(o.cc||"")?" selected":""}>${esc(v[lang])}</option>`).join("")}</select></div>
+    <div class="field"><label for="p-en">${esc(t("nameEn"))}</label><input id="p-en" value="${esc(o.en||"")}"></div>
+    <div class="field"><label for="p-ar">${esc(t("nameAr"))}</label><input id="p-ar" dir="rtl" value="${esc(o.ar||"")}"></div></div>
+   <div class="field"><span class="lbl">${esc(t("pickHint"))}</span><div class="pick-wrap">${geoSvg("pick-map")}${placeDots(code)}<g id="p-marker"></g></svg></div></div>
+   <div class="grid2">
+    <div class="field"><label for="p-lat">${esc(t("lat"))}</label><input id="p-lat" type="number" step="0.001" value="${o.lat??""}" dir="ltr"></div>
+    <div class="field"><label for="p-lon">${esc(t("lon"))}</label><input id="p-lon" type="number" step="0.001" value="${o.lon??""}" dir="ltr"></div>
+    <div class="field"><label for="p-lab">${esc(t("labelSide"))}</label><select id="p-lab"><option value="">${esc(t("right"))}</option><option value="l"${o.lab==="l"?" selected":""}>${esc(t("left"))}</option></select></div>
+    <label class="check" style="align-self:end"><input type="checkbox" id="p-hub"${o.hub?" checked":""}> ${esc(t("hubQ"))}</label></div>
+   <div id="f-err" class="alert warn" hidden></div>`;
+  openSheet(code?t("editPlace"):t("addPlace"),body,`<button class="btn" data-act="close">${esc(t("cancel"))}</button><button class="btn primary" data-act="save-place" data-id="${esc(code||"")}">${esc(t("saveBtn"))}</button>`,"place");
+  drawMarker();
+}
+function drawMarker(){
+  const m=$("#p-marker"); if(!m) return; const la=parseFloat($("#p-lat").value), lo=parseFloat($("#p-lon").value);
+  if(isNaN(la)||isNaN(lo)){ m.innerHTML=""; return; } const [x,y]=proj(la,lo);
+  m.innerHTML=`<circle cx="${x}" cy="${y}" r="14" fill="var(--color-accent-2-400)" fill-opacity=".35"/><circle cx="${x}" cy="${y}" r="6" fill="var(--color-accent)" stroke="var(--bg)" stroke-width="2"/>`;
+}
+document.addEventListener("click",ev=>{ const svg=ev.target.closest(".pick-map"); if(!svg) return;
+  const pt=svg.createSVGPoint(); pt.x=ev.clientX; pt.y=ev.clientY; const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+  $("#p-lat").value=(38-p.y/K).toFixed(3); $("#p-lon").value=(p.x/(K*CO)+34.3).toFixed(3); drawMarker(); });
+document.addEventListener("input",ev=>{ if(ev.target.id==="p-lat"||ev.target.id==="p-lon") drawMarker(); });
+async function savePlaces(next){ await db.doc("meta/places").set({places:next}); }
+async function savePlace(code){
+  const err=$("#f-err"), show=m=>{err.textContent=m;err.hidden=false;};
+  const c=(code||$("#p-code").value).trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(c.length<2) return show(t("placeCode"));
+  if(!code && (CITIES[c]||BASE_CITIES[c])) return show(t("codeTaken"));
+  const en=$("#p-en").value.trim(), ar=$("#p-ar").value.trim(), lat=parseFloat($("#p-lat").value), lon=parseFloat($("#p-lon").value);
+  if(!en) return show(t("needName"));
+  if(isNaN(lat)||isNaN(lon)||lat<28||lat>40||lon<32||lon>46) return show(t("badCoords"));
+  const d={en,ar:ar||en,lat:+lat.toFixed(4),lon:+lon.toFixed(4)}; const lab=$("#p-lab").value, cc=$("#p-cc").value;
+  if(lab) d.lab=lab; if(cc) d.cc=cc; if($("#p-hub").checked) d.hub=1;
+  const base=BASE_CITIES[c]; const next={...(S.places||{})};
+  next[c]= base ? {...d, lab:lab||"", cc:cc||"", hub:d.hub||0} : d;
+  try{ await savePlaces(next); closeOverlay(); toast(t("saved")); }catch(e){ show(writeErr(e)); }
+}
+async function confirmFirst(el){ if(el.dataset.confirm==="1") return true; el.dataset.confirm="1"; el.textContent=t("sureQ"); setTimeout(()=>{ if(el.isConnected){ delete el.dataset.confirm; render(); } },3500); return false; }
+
+/* ---------- DASHBOARD ---------- */
+function renderDash(){
+  const p=S.dash.period; let arr=[...S.trips.values()];
+  const yrs=[...new Set(arr.map(x=>x.date.slice(0,4)))].sort();
+  if(p==="last90") arr=arr.filter(x=>x.date>=addDays(TODAY,-90)&&x.date<=TODAY);
+  else if(/^\d{4}$/.test(p)) arr=arr.filter(x=>x.date.startsWith(p));
+  const done=arr.filter(x=>x.status==="completed");
+  const paxDone=done.reduce((s,x)=>s+(x.pax||[]).length,0), seatsDone=done.reduce((s,x)=>s+(+x.seats||0),0);
+  const shared=done.filter(x=>(x.pax||[]).some(a=>a!==x.lead));
+  const canc=arr.filter(x=>x.status==="cancelled").length;
+  const groups={}; arr.filter(x=>x.status!=="cancelled").forEach(x=>{const k=x.date+x.from+x.to;(groups[k]=groups[k]||new Set()).add(x.lead);});
+  const missed=Object.values(groups).filter(s=>s.size>1).length;
+  const cost=arr.reduce((s,x)=>s+(+x.cost||0),0);
+  const overdue=arr.filter(x=>effStatus(x)==="overdue").length;
+  // months
+  const months={}; arr.forEach(x=>{const k=x.date.slice(0,7);const o=months[k]||(months[k]={c:0,p:0,x:0});const s=effStatus(x);if(s==="completed")o.c++;else if(s==="cancelled")o.x++;else o.p++;});
+  const mk=Object.keys(months).sort(); const mMax=Math.max(1,...mk.map(k=>months[k].c+months[k].p+months[k].x));
+  const routes={}; arr.filter(x=>x.status!=="cancelled").forEach(x=>{const k=pairKey(x.from,x.to);routes[k]=(routes[k]||0)+1;});
+  const rk=Object.entries(routes).sort((a,b)=>b[1]-a[1]).slice(0,8); const rMax=Math.max(1,...rk.map(r=>r[1]));
+  const ags={}; arr.filter(x=>x.status!=="cancelled").forEach(x=>{const k=x.lead||"?";ags[k]=(ags[k]||0)+1;});
+  const ak=Object.entries(ags).sort((a,b)=>b[1]-a[1]); const aMax=Math.max(1,...ak.map(r=>r[1]));
+  const per=["all",...yrs,"last90"];
+  const pct=(a,b)=>b?Math.round(a/b*100)+"%":t("none");
+  $("#view").innerHTML=`
+  <div class="chips" style="margin-bottom:14px">${per.map(x=>`<button class="chip" data-period="${x}" aria-pressed="${p===x}">${esc(x==="all"?t("all"):x==="last90"?t("last90"):x)}</button>`).join("")}</div>
+  <div class="kpis">
+    <div class="panel kpi"><div class="v num">${done.length}</div><div class="l">${esc(t("kTrips"))}</div></div>
+    <div class="panel kpi"><div class="v num">${done.length?(paxDone/done.length).toFixed(1):t("none")}</div><div class="l">${esc(t("kAvg"))}</div></div>
+    <div class="panel kpi"><div class="v num">${pct(paxDone,seatsDone)}</div><div class="l">${esc(t("kFill"))}<br><span class="small">${esc(t("fillNote"))}</span></div></div>
+    <div class="panel kpi alertk"><div class="v num">${shared.length} <span style="font-size:14px">/ ${done.length}</span></div><div class="l">${esc(t("kShared"))}</div></div>
+    <div class="panel kpi alertk"><div class="v num">${missed}</div><div class="l">${esc(t("kMissed"))}<br><span class="small">${esc(t("kMissedSub"))}</span></div></div>
+    <div class="panel kpi"><div class="v num">${pct(canc,arr.length)}</div><div class="l">${esc(t("kCancel"))} · <span class="num">${canc}</span></div></div>
+    <div class="panel kpi"><div class="v num">${money(cost)}</div><div class="l">${esc(t("kCost"))}</div></div>
+    <div class="panel kpi"><div class="v num" style="color:var(--warn)">${overdue}</div><div class="l">${esc(t("kOverdue"))}</div></div>
+  </div>
+  <div class="cols">
+    <section class="panel chart" style="grid-column:1/-1"><h3>${esc(t("byMonth"))}</h3>
+      <div class="months">${mk.map(k=>{const o=months[k];return `<div class="mcol" title="${esc(fmtDate(k+"-15",{month:"long",year:"numeric"}))}: ${o.c+o.p+o.x}"><div class="seg c" style="height:${o.c/mMax*100}%"></div><div class="seg p" style="height:${o.p/mMax*100}%"></div><div class="seg x" style="height:${o.x/mMax*100}%"></div></div>`}).join("")}</div>
+      <div class="mlabels">${mk.map(k=>`<span>${esc(fmtDate(k+"-15",{month:"short"}))}${k.endsWith("-01")||k===mk[0]?"<br>"+k.slice(2,4):""}</span>`).join("")}</div>
+      <div class="mini-legend"><span><i style="background:var(--ok)"></i>${esc(t("completed"))}</span><span><i style="background:var(--color-accent-300)"></i>${esc(t("planned"))} / ${esc(t("unknown"))}</span><span><i style="background:var(--bad)"></i>${esc(t("cancelled"))}</span></div>
+    </section>
+    <section class="panel chart"><h3>${esc(t("topRoutes"))}</h3>${rk.map(([k,n])=>`<div class="hbar"><span>${esc(k.split("|").map(cityName).join(" ↔ "))}</span><div class="track"><div class="fill" style="width:${n/rMax*100}%"></div></div><span class="n num">${n}</span></div>`).join("")}</section>
+    <section class="panel chart"><h3>${esc(t("byAgency"))}</h3>${ak.map(([k,n])=>`<div class="hbar"><span>${agChip(k)}</span><div class="track"><div class="fill" style="width:${n/aMax*100}%"></div></div><span class="n num">${n}</span></div>`).join("")}</section>
+    <section class="panel chart"><h3>${esc(t("soloVsShared"))}</h3>
+      <div class="hbar"><span>${esc(t("passengers"))}</span><div class="track"><div class="fill" style="width:${seatsDone?paxDone/seatsDone*100:0}%"></div><div class="fill b" style="width:${seatsDone?(seatsDone-paxDone)/seatsDone*100:0}%"></div></div><span class="n num">${pct(paxDone,seatsDone)}</span></div>
+      <div class="mini-legend"><span><i style="background:var(--color-accent-600)"></i>${esc(t("passengers"))} <span class="num">${paxDone}</span></span><span><i style="background:var(--color-accent-2-300)"></i>${esc(t("free"))} <span class="num">${seatsDone-paxDone}</span></span></div>
+    </section>
+  </div>`;
+}
+
+/* ---------- people ---------- */
+function personName(id){ return ""; }
+async function resolvePeople(){
+  return; const ids=new Set();
+  S.requests.forEach(r=>r.by&&ids.add(r.by)); S.trips.forEach(x=>x.by&&ids.add(x.by)); S.needs.forEach(n=>n.by&&ids.add(n.by));
+  if(!ids.size) return;
+  try{ profiles=await userNs.profiles([...ids]); }catch(e){}
+}
+
+/* ---------- overlays ---------- */
+let overlayState=null;
+function closeOverlay(){ overlayState=null; $("#overlay-root").innerHTML=""; }
+function openSheet(title,body,foot,kind){
+  overlayState={kind};
+  $("#overlay-root").innerHTML=`<div class="overlay" data-act="overlay-bg"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <div class="sheet-head"><h2>${esc(title)}</h2><button class="btn ghost" data-act="close" aria-label="${esc(t("close"))}">✕</button></div>
+    <div class="sheet-body">${body}</div>${foot?`<div class="sheet-foot">${foot}</div>`:""}</div></div>`;
+}
+const cityOpts = sel => Object.keys(CITIES).map(c=>`<option value="${c}"${c===sel?" selected":""}>${esc(cityName(c))} (${c})</option>`).join("");
+const agOpts = (sel,blank) => (blank?`<option value="">${esc(t("chooseAgency"))}</option>`:"")+agencyCodes().map(c=>`<option${c===sel?" selected":""}>${esc(c)}</option>`).join("");
+
+function tripForm(id){
+  const ex=id?S.trips.get(id):null;
+  const tr=ex?{...ex,pax:[...(ex.pax||[])]}:{date:addDays(TODAY,1),time:"09:00",from:"DAM",to:"",lead:S.myAgency,vehicle:"car",seats:4,pax:S.myAgency?[S.myAgency]:[],cargo:"",cost:null,reimb:"",comments:"",status:"planned"};
+  const pc=paxCounts(tr); if(!ex && S.myAgency && !pc[S.myAgency]) pc[S.myAgency]=1;
+  const veh=Object.keys(VEHICLES);
+  const body=`
+   <div class="grid2">
+     <div class="field"><label for="f-date">${esc(t("date"))}</label><input type="date" id="f-date" value="${esc(tr.date)}"></div>
+     <div class="field"><label for="f-time">${esc(t("time"))}</label><input type="time" id="f-time" value="${esc(/^\d\d:\d\d$/.test(tr.time)?tr.time:"")}"></div>
+     <div class="field"><label for="f-from">${esc(t("from"))}</label><select id="f-from"><option value=""></option>${cityOpts(tr.from)}</select></div>
+     <div class="field"><label for="f-to">${esc(t("to"))}</label><select id="f-to"><option value=""></option>${cityOpts(tr.to)}</select></div>
+     <div class="field"><label for="f-lead">${esc(t("lead"))}</label><select id="f-lead"${S.admin?"":" disabled"}>${agOpts(tr.lead,true)}</select></div>
+     <div class="field"><label for="f-vehicle">${esc(t("vehicle"))}</label><select id="f-vehicle">${veh.map(v=>`<option value="${v}"${v===(tr.vehicle||"car")?" selected":""}>${esc(t(v))}</option>`).join("")}</select></div>
+     <div class="field"><label for="f-seats">${esc(t("capacity"))}</label><input type="number" id="f-seats" min="1" max="30" value="${+tr.seats||4}"></div>
+     ${ex?`<div class="field"><label for="f-status">${esc(t("status"))}</label><select id="f-status">${["planned","completed","cancelled"].map(s=>`<option value="${s}"${s===tr.status?" selected":""}>${esc(t(s))}</option>`).join("")}<option value=""${!tr.status?" selected":""}>${esc(t("unknown"))}</option></select></div>`:`<div></div>`}
+   </div>
+   <div class="field"><span class="lbl">${esc(t("paxByAgency"))}</span><div id="pax-rows" style="display:grid;gap:6px">${Object.entries(pc).map(([a,n])=>paxRowHtml(a,n)).join("")}</div>
+     <div><button type="button" class="btn small" data-act="add-pax">+ ${esc(t("addAgency"))}</button></div></div>
+   <div id="f-estimate"></div>
+   <div id="f-match"></div>
+   <div class="grid2">
+     <div class="field"><label for="f-cost">${esc(t("cost"))}</label><input type="number" step="0.5" min="0" id="f-cost" value="${tr.cost??""}"></div>
+     <div class="field"><label for="f-reimb">${esc(t("reimb"))}</label><select id="f-reimb"><option value="">${esc(t("none"))}</option><option value="pending"${tr.reimb==="pending"?" selected":""}>${esc(t("reimbPending"))}</option><option value="paid"${tr.reimb==="paid"?" selected":""}>${esc(t("paid"))}</option></select></div>
+   </div>
+   <div class="field"><label for="f-comments">${esc(t("comments"))}</label><textarea id="f-comments">${esc(tr.comments||"")}</textarea></div>
+   <div id="f-err" class="alert warn" hidden></div>`;
+  const foot=`<button class="btn" data-act="close">${esc(t("cancel"))}</button><button class="btn primary" data-act="save-trip" data-id="${esc(id||"")}">${esc(t("save"))}</button>`;
+  openSheet(ex?t("editTrip"):t("newTrip"),body,foot,"trip-form");
+  updateTripFormHelpers();
+}
+function paxRowHtml(a,n){ return `<div class="paxrow"><select class="px-ag">${agOpts(a,true)}</select><input class="px-n" type="number" min="0" max="30" value="${n}" aria-label="${esc(t("pax"))}"><button type="button" class="btn small ghost" data-act="rm-pax" aria-label="${esc(t("remove"))}">✕</button></div>`; }
+function readPax(){ const out=[]; document.querySelectorAll("#pax-rows .paxrow").forEach(r=>{const a=r.querySelector(".px-ag").value;const n=Math.max(0,Math.min(30,+r.querySelector(".px-n").value||0));if(a)for(let i=0;i<n;i++)out.push(a);}); return out; }
+function updateTripFormHelpers(){
+  const from=$("#f-from")?.value,to=$("#f-to")?.value,date=$("#f-date")?.value,veh=$("#f-vehicle")?.value,lead=$("#f-lead")?.value;
+  const est=$("#f-estimate"),mt=$("#f-match"); if(!est) return;
+  if(from&&to&&from!==to){
+    const rd=road(from,to), r=rate(from,to,veh), n=Math.max(1,readPax().length);
+    est.innerHTML=`<div class="estimate"><span>${esc(t("distance"))}: <b class="num">${rd?rd.km:"?"} ${esc(t("km"))}</b> · <span class="num">${rd?rd.h:"?"} ${esc(t("hours"))}</span>${rd&&!rd.exact?` <span class="muted">(${esc(t("approx"))})</span>`:""}</span>
+</div>`;
+  } else est.innerHTML="";
+  if(from&&to&&date&&overlayState?.kind==="trip-form"&&!$("[data-act=save-trip]")?.dataset.id){
+    const trips=[...S.trips.values()].filter(x=>x.from===from&&x.to===to&&effStatus(x)==="planned"&&Math.abs(dayDiff(x.date,date))<=1&&x.lead!==lead);
+    const needs=[...S.needs.values()].filter(n=>n.status==="open"&&n.from===from&&n.to===to&&Math.abs(dayDiff(n.date,date))<=Math.max(1,+n.flex||0)&&n.agency!==lead);
+    mt.innerHTML=(trips.length?`<div class="alert seat"><b>${esc(t("matchTitle"))}</b><div class="small">${esc(t("matchSub"))}</div><div style="display:grid;gap:4px;margin-top:6px">${trips.map(x=>`<button type="button" class="btn small" data-trip="${esc(x.id)}" style="justify-content:flex-start">${agChip(x.lead)} <span class="num">${esc(fmtDate(x.date,{weekday:"short",day:"numeric",month:"short"}))} ${esc(x.time||"")}</span> · ${freeSeats(x)} ${esc(t("free"))}</button>`).join("")}</div></div>`:"")
+     +(needs.length?`<div class="alert" style="margin-top:8px"><b>${esc(t("needsTitle"))}</b><div style="display:grid;gap:2px;margin-top:4px">${needs.map(n=>`<span class="small">${agChip(n.agency)} ×${n.seats} · <span class="num">${esc(fmtDate(n.date,{day:"numeric",month:"short"}))}</span>${+n.flex?` ±${n.flex}`:""}${n.note?" · "+esc(n.note):""}</span>`).join("")}</div></div>`:"");
+  } else mt.innerHTML="";
+}
+async function saveTrip(id){
+  const g=s=>$(s)?.value??"";
+  const err=$("#f-err"); const show=m=>{err.textContent=m;err.hidden=false;};
+  const data={date:g("#f-date"),time:g("#f-time"),from:g("#f-from"),to:g("#f-to"),lead:g("#f-lead"),vehicle:g("#f-vehicle"),seats:Math.max(1,+g("#f-seats")||4),
+    pax:readPax(),cargo:(id&&S.trips.get(id)?.cargo)||"",cost:g("#f-cost")===""?null:+g("#f-cost"),reimb:g("#f-reimb"),comments:g("#f-comments").trim()};
+  if(!data.date||!data.from||!data.to) return show(t("required"));
+  if(data.from===data.to) return show(t("sameCity"));
+  if(!S.admin){ data.lead=S.myAgency; if(id&&!canManageTrip(S.trips.get(id))) return show(t("onlyLead")); }
+  if(!data.lead) return show(t("chooseAgency"));
+  if(data.pax.length>data.seats) data.seats=data.pax.length;
+  try{
+    if(id){ data.status=g("#f-status"); await db.doc("trips/"+id).update(data); }
+    else{
+      data.status="planned"; data.by=S.user; data.at=new Date().toISOString();
+      await db.collection("trips").add(data);
+    }
+    closeOverlay(); toast(t("saved"));
+  }catch(e){ show(writeErr(e)); }
+}
+function writeErr(e){ console.error(e); return t("failed"); }
+
+function tripDetail(id){
+  const tr=S.trips.get(id); if(!tr) return;
+  const st=effStatus(tr), pc=paxCounts(tr), n=(tr.pax||[]).length, isLead=canManageTrip(tr);
+  const ag=S.agencies.get(tr.lead); const ct=(ag?.contacts||[])[0];
+  const reqs=[...S.requests.values()].filter(r=>r.tripId===id);
+  const rd=road(tr.from,tr.to); const canW=S.canWrite!==false;
+  const myReq = S.myAgency && reqs.find(r=>r.agency===S.myAgency&&r.status==="pending");
+  const body=`
+   <div class="big-route">${esc(cityName(tr.from))} <span class="arrow">→</span> ${esc(cityName(tr.to))}</div>
+   <div class="row-top"><span class="num">${esc(fmtDate(tr.date,{weekday:"long",day:"numeric",month:"long",year:"numeric"}))} · ${esc(tr.time||"--:--")}</span>${stPill(st)}</div>
+   ${st==="planned"&&freeSeats(tr)&&canW&&tr.lead!==S.myAgency?(myReq?`<div class="alert seat">${esc(t("pending"))}: ${esc(S.myAgency)} ×${myReq.seats}</div>`:`<button class="btn seat" data-act="req-seat" data-id="${esc(id)}">${esc(t("requestOn"))} · ${freeSeats(tr)} ${esc(t("free"))}</button>`):""}
+   <dl class="kv">
+     <dt>${esc(t("lead"))}</dt><dd>${agChip(tr.lead)} ${esc(agencyName(tr.lead)!==tr.lead?agencyName(tr.lead):"")}</dd>
+     <dt>${esc(t("passengers"))}</dt><dd>${Object.entries(pc).map(([a,k])=>`${agChip(a)} ×${k}`).join(" ")||t("none")}</dd>
+     ${(tr.drops||[]).length?`<dt>${esc(t("stops"))}</dt><dd style="display:flex;flex-direction:column;gap:4px">${tr.drops.map(d=>`<span>${esc(cityName(d.at))} · ${agChip(d.agency)} ×${d.seats}</span>`).join("")}</dd>`:""}
+     <dt>${esc(t("seats"))}</dt><dd>${seatbar(tr)} <span class="num">${n}/${tr.seats}</span></dd>
+     <dt>${esc(t("vehicle"))}</dt><dd>${tr.vehicle?esc(t(tr.vehicle)):t("none")}</dd>
+     <dt>${esc(t("distance"))}</dt><dd class="num">${rd?`${rd.km} ${esc(t("km"))} · ${rd.h} ${esc(t("hours"))}${rd.exact?"":" ("+esc(t("approx"))+")"}`:t("none")}</dd>
+     <dt>${esc(t("cargo"))}</dt><dd>${esc(tr.cargo||t("none"))}</dd>
+     <dt>${esc(t("cost"))}</dt><dd class="num">${money(tr.cost)}${tr.reimb?` · <span class="pill st-${tr.reimb==="paid"?"accepted":"pending"}">${esc(t(tr.reimb==="paid"?"paid":"reimbPending"))}</span>`:""}</dd>
+     <dt>${esc(t("comments"))}</dt><dd>${esc(tr.comments||t("none"))}</dd>
+     ${tr.by?`<dt>${esc(t("postedBy"))}</dt><dd>${agChip(tr.by)}</dd>`:""}
+   </dl>
+   ${tr.cost&&n?`<div><h3 style="font-size:14px;margin-bottom:6px">${esc(t("costSplit"))}</h3><table class="split"><tbody>${Object.entries(pc).map(([a,k])=>`<tr><td>${agChip(a)}</td><td class="num">×${k}</td><td class="num" style="text-align:end">${money(tr.cost*k/n)}</td></tr>`).join("")}</tbody></table></div>`:""}
+   ${ct?`<div class="alert"><div class="small muted">${esc(t("leadContact"))}</div><b>${esc(ct.name)}</b>${ct.phone?` · <span class="mono" dir="ltr">${esc(ct.phone)}</span> <button class="copy" data-copy="${esc(ct.phone)}">${esc(t("copy"))}</button>`:""}${ct.email?`<br><span class="mono small">${esc(ct.email)}</span> <button class="copy" data-copy="${esc(ct.email)}">${esc(t("copy"))}</button>`:""}</div>`:""}
+   ${reqs.length?`<div><h3 style="font-size:14px;margin-bottom:4px">${esc(t("requestsOnTrip"))}</h3><div class="panel">${reqs.map(r=>reqRow(r,isLead?"in":(r.agency===S.myAgency?"mine":""))).join("")}</div></div>`:""}
+   ${!isLead&&canW?`<div class="small muted">${esc(t("onlyLead"))}</div>`:""}`;
+  const foot = isLead&&canW ? `${st==="planned"||st==="overdue"?`<button class="btn" data-act="set-status" data-s="completed" data-id="${esc(id)}">${esc(t("markDone"))}</button><button class="btn danger" data-act="set-status" data-s="cancelled" data-id="${esc(id)}">${esc(t("markCancelled"))}</button>`:""}<button class="btn primary" data-act="edit-trip" data-id="${esc(id)}">${esc(t("edit"))}</button>` : `<button class="btn" data-act="close">${esc(t("close"))}</button>`;
+  openSheet(t("details"),body,foot,"detail");
+  overlayState.id=id;
+}
+function onRouteStops(from,to){
+  const A=CITIES[from],B=CITIES[to]; if(!A||!B) return [];
+  const [ax,ay]=proj(A.lat,A.lon),[bx,by]=proj(B.lat,B.lon), dx=bx-ax,dy=by-ay, L2=dx*dx+dy*dy||1, L=Math.sqrt(L2);
+  return Object.entries(CITIES).filter(([c])=>c!==from&&c!==to).map(([c,o])=>{const[x,y]=proj(o.lat,o.lon);const u=((x-ax)*dx+(y-ay)*dy)/L2;const d=Math.abs((x-ax)*dy-(y-ay)*dx)/L;return {c,u,d};})
+    .filter(p=>p.u>0.04&&p.u<0.96&&p.d<Math.max(35,L*0.16)).sort((a,b)=>a.u-b.u).map(p=>p.c);
+}
+function dropLabel(r,tr){ return r.dropoff&&tr&&r.dropoff!==tr.to ? ` · <span class="pill st-open">${esc(t("dropTo"))} ${esc(cityName(r.dropoff))}</span>` : ""; }
+function seatRequestForm(id){
+  const tr=S.trips.get(id); if(!tr) return;
+  const body=`<div class="big-route" style="font-size:18px">${esc(cityName(tr.from))} <span class="arrow">→</span> ${esc(cityName(tr.to))}</div>
+   <div class="num">${esc(fmtDate(tr.date))} · ${esc(tr.time||"")} · ${agChip(tr.lead)} · ${freeSeats(tr)} ${esc(t("free"))}</div>
+   <div class="grid2"><div class="field"><label for="r-ag">${esc(t("username"))}</label><select id="r-ag"${S.admin?"":" disabled"}>${agOpts(S.admin?"":S.myAgency,true)}</select></div>
+   <div class="field"><label for="r-n">${esc(t("seatsWanted"))}</label><input type="number" id="r-n" min="1" max="${freeSeats(tr)}" value="1"></div></div>
+   <div class="field"><label for="r-drop">${esc(t("dropAt"))}</label><select id="r-drop">
+     <option value="">${esc(cityName(tr.to))} · ${esc(t("dropEnd"))}</option>
+     ${(()=>{const on=onRouteStops(tr.from,tr.to);const rest=Object.keys(CITIES).filter(c=>c!==tr.from&&c!==tr.to&&!on.includes(c));
+       return (on.length?`<optgroup label="${esc(t("onRoute"))}">${on.map(c=>`<option value="${c}">${esc(cityName(c))}</option>`).join("")}</optgroup>`:"")+`<optgroup label="${esc(t("otherPl"))}">${rest.map(c=>`<option value="${c}" data-detour="1">${esc(cityName(c))}</option>`).join("")}</optgroup>`;})()}
+   </select><span class="small muted" id="r-detour" hidden>${esc(t("detourNote"))}</span></div>
+   <div class="field"><label for="r-names">${esc(t("names"))}</label><input id="r-names"></div>
+   <div class="field"><label for="r-note">${esc(t("note"))}</label><textarea id="r-note"></textarea></div><div id="f-err" class="alert warn" hidden></div>`;
+  openSheet(t("requestSeat"),body,`<button class="btn" data-act="close">${esc(t("cancel"))}</button><button class="btn seat" data-act="send-req" data-id="${esc(id)}">${esc(t("send"))}</button>`,"req");
+}
+async function sendRequest(id){
+  const ag=$("#r-ag").value, n=Math.max(1,+$("#r-n").value||1), err=$("#f-err");
+  if(!ag){err.textContent=t("pickAgencyFirst");err.hidden=false;return;}
+  const tr=S.trips.get(id); if(tr && n>freeSeats(tr)){err.textContent=t("notEnough");err.hidden=false;return;}
+  try{ await db.collection("requests").add({tripId:id,agency:ag,seats:n,dropoff:$("#r-drop").value||"",names:$("#r-names").value.trim(),note:$("#r-note").value.trim(),status:"pending",by:S.user,at:new Date().toISOString()});
+    closeOverlay(); toast(t("sent")); }catch(e){err.textContent=writeErr(e);err.hidden=false;}
+}
+async function decide(rid,accept){
+  const r=S.requests.get(rid); if(!r) return; if(!canManageTrip(S.trips.get(r.tripId))){ toast(t("onlyLead")); return; } const ref=db.doc("trips/"+r.tripId);
+  try{
+    if(accept){
+      const snap=await ref.get(); if(!snap.exists) return;
+      const tr=snap.data(); const free=Math.max(0,(+tr.seats||0)-(tr.pax||[]).length);
+      if(free<r.seats){ toast(t("notEnough")); return; }
+      const upd={pax:[...(tr.pax||[]),...Array(r.seats).fill(r.agency)]};
+      if(r.dropoff&&r.dropoff!==tr.to) upd.drops=[...(tr.drops||[]),{agency:r.agency,seats:r.seats,at:r.dropoff}];
+      await ref.update(upd);
+    }
+    await db.doc("requests/"+rid).update({status:accept?"accepted":"declined",decidedBy:S.user,decidedAt:new Date().toISOString()});
+    toast(t("saved"));
+  }catch(e){ toast(writeErr(e)); }
+}
+function needForm(){
+  const body=`<p class="muted" style="margin:0">${esc(t("needSub"))}</p>
+   <div class="grid2">
+    <div class="field"><label for="n-from">${esc(t("from"))}</label><select id="n-from"><option value=""></option>${cityOpts("")}</select></div>
+    <div class="field"><label for="n-to">${esc(t("to"))}</label><select id="n-to"><option value=""></option>${cityOpts("")}</select></div>
+    <div class="field"><label for="n-date">${esc(t("date"))}</label><input type="date" id="n-date" value="${addDays(TODAY,1)}"></div>
+    <div class="field"><label for="n-flex">${esc(t("flex"))}</label><select id="n-flex">${[0,1,2,3].map(d=>`<option value="${d}">± ${d} ${esc(t("days"))}</option>`).join("")}</select></div>
+    <div class="field"><label for="n-ag">${esc(t("username"))}</label><select id="n-ag"${S.admin?"":" disabled"}>${agOpts(S.admin?"":S.myAgency,true)}</select></div>
+    <div class="field"><label for="n-seats">${esc(t("seatsWanted"))}</label><input type="number" id="n-seats" min="1" max="10" value="1"></div>
+   </div>
+   <div class="field"><label for="n-note">${esc(t("note"))}</label><textarea id="n-note"></textarea></div>
+   <div id="n-match"></div><div id="f-err" class="alert warn" hidden></div>`;
+  openSheet(t("needTitle"),body,`<button class="btn" data-act="close">${esc(t("cancel"))}</button><button class="btn primary" data-act="save-need">${esc(t("postNeedBtn"))}</button>`,"need");
+}
+function updateNeedMatch(){
+  const n={from:$("#n-from")?.value,to:$("#n-to")?.value,date:$("#n-date")?.value,flex:Math.max(1,+$("#n-flex")?.value||0),agency:$("#n-ag")?.value};
+  const el=$("#n-match"); if(!el) return; if(!n.from||!n.to||!n.date){el.innerHTML="";return;}
+  const mt=matchingTripsFor(n);
+  el.innerHTML=mt.length?`<div class="alert seat"><b>${esc(t("matchTitle"))}</b><div style="display:grid;gap:4px;margin-top:6px">${mt.map(x=>`<button type="button" class="btn small" data-act="req-seat" data-id="${esc(x.id)}" style="justify-content:flex-start">${agChip(x.lead)} <span class="num">${esc(fmtDate(x.date,{weekday:"short",day:"numeric",month:"short"}))} ${esc(x.time||"")}</span> · ${freeSeats(x)} ${esc(t("free"))} → ${esc(t("requestSeat"))}</button>`).join("")}</div></div>`:"";
+}
+async function saveNeed(){
+  const d={from:$("#n-from").value,to:$("#n-to").value,date:$("#n-date").value,flex:+$("#n-flex").value||0,agency:$("#n-ag").value,seats:Math.max(1,+$("#n-seats").value||1),note:$("#n-note").value.trim(),status:"open",by:S.user,at:new Date().toISOString()};
+  const err=$("#f-err");
+  if(!d.from||!d.to||!d.date){err.textContent=t("required");err.hidden=false;return;}
+  if(d.from===d.to){err.textContent=t("sameCity");err.hidden=false;return;}
+  if(!d.agency){err.textContent=t("pickAgencyFirst");err.hidden=false;return;}
+  try{ await db.collection("needs").add(d); closeOverlay(); toast(t("posted")); }catch(e){err.textContent=writeErr(e);err.hidden=false;}
+}
+function agencyForm(code){
+  const a=code?S.agencies.get(code):{code:"",name:"",areas:[],contacts:[{kind:"focal",name:"",role:"",email:"",phone:""}],notes:""};
+  const areaKeys=[...new Set([...Object.keys(AREA),...Object.keys(CITIES).filter(k=>!BASE_CITIES[k])])];
+  const body=`<div class="grid2"><div class="field"><label for="a-code">${esc(t("code"))}</label><input id="a-code" value="${esc(a.code)}" ${code?"disabled":""} maxlength="12"></div>
+    <div class="field"><label for="a-name">${esc(t("name"))}</label><input id="a-name" value="${esc(a.name||"")}"></div></div>
+   <div class="field"><span class="lbl">${esc(t("areas"))}</span><div class="chips">${areaKeys.map(k=>`<label class="chip" style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" class="a-area" value="${k}"${(a.areas||[]).includes(k)?" checked":""}> ${esc(cityName(k))}</label>`).join("")}</div></div>
+   <div class="field"><span class="lbl">${esc(t("contacts"))}</span><div id="ct-rows" style="display:grid;gap:10px">${(a.contacts||[]).map(contactRowHtml).join("")}</div><div><button type="button" class="btn small" data-act="add-contact">+ ${esc(t("addContact"))}</button></div></div>
+   <div class="field"><label for="a-notes">${esc(t("comments"))}</label><textarea id="a-notes">${esc(a.notes||"")}</textarea></div>
+   ${S.admin?`<div class="field"><label for="a-emails">${esc(t("loginEmails"))}</label><textarea id="a-emails" dir="ltr" autocomplete="off" spellcheck="false" placeholder="name@organisation.org">${esc((a.emails||[]).join("\n"))}</textarea><span class="small muted">${esc(t("loginEmailsHint"))}</span></div>`:""}
+   <div id="f-err" class="alert warn" hidden></div>`;
+  openSheet(code?t("editAgency"):t("newAgency"),body,`<button class="btn" data-act="close">${esc(t("cancel"))}</button><button class="btn primary" data-act="save-agency" data-id="${esc(code||"")}">${esc(t("saveBtn"))}</button>`,"agency");
+}
+function contactRowHtml(c){ return `<div class="panel ct-row" style="padding:10px;display:grid;gap:6px"><div class="grid2">
+  <select class="c-kind">${["focal","management","backup"].map(k=>`<option value="${k}"${k===c.kind?" selected":""}>${esc(t(k))}</option>`).join("")}</select><input class="c-name" placeholder="${esc(t("name"))}" value="${esc(c.name||"")}">
+  <input class="c-role" placeholder="${esc(t("role"))}" value="${esc(c.role||"")}"><input class="c-email" placeholder="${esc(t("email"))}" value="${esc(c.email||"")}">
+  <input class="c-phone" placeholder="${esc(t("phone"))}" value="${esc(c.phone||"")}" dir="ltr"><button type="button" class="btn small ghost danger" data-act="rm-contact">${esc(t("remove"))}</button></div></div>`; }
+async function saveAgency(code){
+  const c=(code||$("#a-code").value).trim().toUpperCase().replace(/[^A-Z0-9_-]/g,""); const err=$("#f-err");
+  if(!canEditAgency(c)){err.textContent=t("ownOnly");err.hidden=false;return;}
+  if(!c){err.textContent=t("code");err.hidden=false;return;}
+  const contacts=[...document.querySelectorAll(".ct-row")].map(r=>({kind:r.querySelector(".c-kind").value,name:r.querySelector(".c-name").value.trim(),role:r.querySelector(".c-role").value.trim(),email:r.querySelector(".c-email").value.trim(),phone:r.querySelector(".c-phone").value.trim()})).filter(x=>x.name||x.email||x.phone);
+  const d={code:c,name:$("#a-name").value.trim(),areas:[...document.querySelectorAll(".a-area:checked")].map(x=>x.value),contacts,notes:$("#a-notes").value.trim()};
+  const prevEm=S.agencies.get(c)?.emails||[];
+  d.emails = S.admin ? [...new Set(($("#a-emails")?.value||"").split(/[\s,;]+/).map(x=>x.trim().toLowerCase()).filter(x=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x)))] : prevEm;
+  try{
+    await db.doc("agencies/"+c).set(d);
+    if(S.admin){ for(const e of prevEm) if(!d.emails.includes(e)) await db.doc("users/"+e).delete(); for(const e of d.emails) await db.doc("users/"+e).set({agency:c}); }
+    closeOverlay(); toast(t("saved"));
+  }catch(e){err.textContent=writeErr(e);err.hidden=false;}
+}
+
+/* ---------- export ---------- */
+function loadXLSX(){ return new Promise((res,rej)=>{ if(window.XLSX) return res(window.XLSX); const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; s.onload=()=>res(window.XLSX); s.onerror=rej; document.head.appendChild(s); }); }
+async function exportXlsx(){
+  try{
+    const X=await loadXLSX();
+    const head=["Date","From","To","Departure time","Lead Agency"].concat(Array.from({length:10},(_,i)=>"Passenger #"+(i+1))).concat(["Small Cargo","Vehicle","Seats","Free seats","Cost of the whole trip (USD)","Reimbursement Status","Comments","Status"]);
+    const rows=regTrips().slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(x=>{const p=(x.pax||[]).slice(0,10);while(p.length<10)p.push("");
+      return [x.date,x.from,x.to,x.time||"",x.lead].concat(p).concat([x.cargo||"",x.vehicle?I18N.en[x.vehicle]:"",+x.seats||"",freeSeats(x),x.cost??"",x.reimb==="paid"?"Paid":x.reimb?"Pending":"",x.comments||"",I18N.en[effStatus(x)]]);});
+    const ws=X.utils.aoa_to_sheet([head,...rows]); ws["!cols"]=head.map((h,i)=>({wch:i===0?11:i>=20?18:10}));
+    const wb=X.utils.book_new(); X.utils.book_append_sheet(wb,ws,"All Routes");
+    const buf=X.write(wb,{type:"array",bookType:"xlsx"});
+    const url=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+    const a=document.createElement("a"); a.href=url; a.download="Movement_Planning_"+TODAY+".xlsx"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000);
+  }catch(e){ if(e&&e.code==="declined") return; toast(t("exportFail")); }
+}
+
+
+
+/* ---------- events ---------- */
+document.addEventListener("click",async ev=>{
+  const el=ev.target.closest("[data-act],[data-tab],[data-trip],[data-range],[data-period],[data-city],[data-route],[data-copy]");
+  if(!el) return;
+  if(el.dataset.copy!==undefined){ ev.stopPropagation(); const v=el.dataset.copy; try{ await navigator.clipboard.writeText(v); el.textContent=t("copied"); setTimeout(()=>el.textContent=t("copy"),1400);}catch(e){ toast(v); } return; }
+  if(el.dataset.tab){ S.tab=el.dataset.tab; try{history.replaceState(null,"","#"+S.tab);}catch(e){} render(); return; }
+  if(el.dataset.range){ S.map.range=el.dataset.range; S.map.limit=120; render(); return; }
+  if(el.dataset.period){ S.dash.period=el.dataset.period; render(); return; }
+  if(el.dataset.city){ S.map.city=S.map.city===el.dataset.city?"":el.dataset.city; S.map.route=""; render(); if(S.map.city&&isNarrow()) scrollToList(); return; }
+  if(el.dataset.route){ S.map.route=S.map.route===el.dataset.route?"":el.dataset.route; S.map.city=""; render(); if(S.map.route&&isNarrow()) scrollToList(); return; }
+  const act=el.dataset.act;
+  if(!act && el.dataset.trip){ tripDetail(el.dataset.trip); return; }
+  switch(act){
+    case "overlay-bg": if(ev.target===el) closeOverlay(); break;
+    case "close": closeOverlay(); break;
+    case "logout": logout(); break;
+    case "new-trip": tripForm(); break;
+    case "need": needForm(); break;
+    case "clear-map": S.map.city="";S.map.route=""; render(); break;
+    case "more-map": S.map.limit+=200; render(); break;
+    case "more-reg": S.reg.limit+=300; render(); break;
+    case "sort": S.reg.sort=S.reg.sort==="asc"?"desc":"asc"; render(); break;
+    case "show-overdue": S.reg.status=S.reg.status==="overdue"?"":"overdue"; render(); break;
+    case "export": exportXlsx(); break;
+    case "add-pax": $("#pax-rows").insertAdjacentHTML("beforeend",paxRowHtml("",1)); updateTripFormHelpers(); break;
+    case "rm-pax": el.closest(".paxrow").remove(); updateTripFormHelpers(); break;
+    case "use-rate": $("#f-cost").value=el.dataset.v; break;
+    case "save-trip": el.disabled=true; await saveTrip(el.dataset.id); el.disabled=false; break;
+    case "edit-trip": tripForm(el.dataset.id); break;
+    case "set-status": try{ await db.doc("trips/"+el.dataset.id).update({status:el.dataset.s}); toast(t("saved")); tripDetail(el.dataset.id);}catch(e){toast(writeErr(e));} break;
+    case "req-seat": seatRequestForm(el.dataset.id); break;
+    case "send-req": el.disabled=true; await sendRequest(el.dataset.id); el.disabled=false; break;
+    case "accept": el.disabled=true; await decide(el.dataset.id,true); break;
+    case "decline": el.disabled=true; await decide(el.dataset.id,false); break;
+    case "withdraw-req": try{ await db.doc("requests/"+el.dataset.id).update({status:"withdrawn"}); }catch(e){toast(writeErr(e));} break;
+    case "save-need": el.disabled=true; await saveNeed(); el.disabled=false; break;
+    case "need-covered": case "need-withdraw": try{ await db.doc("needs/"+el.dataset.id).update({status:act==="need-covered"?"covered":"withdrawn"}); }catch(e){toast(writeErr(e));} break;
+    case "new-agency": agencyForm(); break;
+    case "edit-agency": agencyForm(el.dataset.id); break;
+    case "add-contact": $("#ct-rows").insertAdjacentHTML("beforeend",contactRowHtml({kind:"focal"})); break;
+    case "rm-contact": el.closest(".ct-row").remove(); break;
+    case "save-agency": el.disabled=true; await saveAgency(el.dataset.id); el.disabled=false; break;
+    case "new-place": placeForm(); break;
+    case "notify": S.notifyOpen=!S.notifyOpen; if(S.notifyOpen) renderNotify(); else closeNotify(); break;
+    case "n-close": closeNotify(); break;
+    case "n-trip": tripDetail(el.dataset.id); break;
+    case "n-reqseat": seatRequestForm(el.dataset.id); break;
+    case "n-status": el.disabled=true; try{ await db.doc("trips/"+el.dataset.id).update({status:el.dataset.s}); toast(t("saved")); }catch(e){toast(writeErr(e));} break;
+    case "edit-place": placeForm(el.dataset.id); break;
+    case "save-place": el.disabled=true; await savePlace(el.dataset.id); el.disabled=false; break;
+    case "del-place": { if(!(await confirmFirst(el))) break; const c=el.dataset.id, next={...(S.places||{})}; if(BASE_CITIES[c]) next[c]={...(next[c]||{}),hidden:true}; else delete next[c]; try{ await savePlaces(next); toast(t("saved")); }catch(e){toast(writeErr(e));} break; }
+    case "restore-place": { const c=el.dataset.id, next={...(S.places||{})}; if(next[c]){ const {hidden,...rest}=next[c]; if(Object.keys(rest).length) next[c]=rest; else delete next[c]; } try{ await savePlaces(next); }catch(e){toast(writeErr(e));} break; }
+    case "del-agency": { if(!S.admin) break; const c=el.dataset.id; if(!(await confirmFirst(el))) break; try{ for(const e of (S.agencies.get(c)?.emails||[])) await db.doc("users/"+e).delete(); await db.doc("agencies/"+c).delete(); toast(t("saved")); }catch(e){toast(writeErr(e));} break; }
+    default: if(el.dataset.trip) tripDetail(el.dataset.trip);
+  }
+});
+document.addEventListener("keydown",ev=>{
+  if(ev.key==="Escape"&&overlayState) closeOverlay();
+  if(ev.key==="Enter"&&ev.target.matches(".trip[data-trip]")) tripDetail(ev.target.dataset.trip);
+});
+document.addEventListener("input",ev=>{
+  const id=ev.target.id;
+  if(id==="reg-q"){ S.reg.q=ev.target.value; clearTimeout(window.__rq); window.__rq=setTimeout(()=>{ const pos=ev.target.selectionStart; render(); const i=$("#reg-q"); if(i){i.focus(); try{i.setSelectionRange(pos,pos);}catch(e){}} },220); return; }
+  if(overlayState?.kind==="trip-form") updateTripFormHelpers();
+  if(overlayState?.kind==="need") updateNeedMatch();
+});
+document.addEventListener("change",ev=>{
+  const id=ev.target.id, v=ev.target.value;
+  if(id==="map-agency"){ S.map.agency=v; render(); return; }
+  if(id==="seats-only"){ S.map.seatsOnly=ev.target.checked; render(); return; }
+  if(id==="reg-from"){S.reg.from=v;render();return;} if(id==="reg-to"){S.reg.to=v;render();return;}
+  if(id==="reg-agency"){S.reg.agency=v;render();return;} if(id==="reg-status"){S.reg.status=v;render();return;}
+  if(id==="r-drop"){ const o=ev.target.selectedOptions[0]; $("#r-detour").hidden=!(o&&o.dataset.detour); }
+  if(overlayState?.kind==="trip-form") updateTripFormHelpers();
+  if(overlayState?.kind==="need") updateNeedMatch();
+});
+$("#lang-en").onclick=()=>{lang="en";try{localStorage.setItem("mp-lang",lang);}catch(e){} applyLang();renderActing();render();if(overlayState?.kind==="detail")tripDetail(overlayState.id);};
+$("#lang-ar").onclick=()=>{lang="ar";try{localStorage.setItem("mp-lang",lang);}catch(e){} applyLang();renderActing();render();if(overlayState?.kind==="detail")tripDetail(overlayState.id);};
+
+/* =====================================================================
+   FIREBASE SETTINGS — paste your web app config below (Project settings → Your apps).
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAYpazXTy-PXq6I5-K1SM1TtxbUXbxeTJw",
+  authDomain: "shared-fleet-syria.firebaseapp.com",
+  projectId: "shared-fleet-syria",
+  storageBucket: "shared-fleet-syria.firebasestorage.app",
+  messagingSenderId: "1092451959657",
+  appId: "1:1092451959657:web:dc452454b64ceb7d4b33f8",
+  measurementId: "G-0TLWE0ZEE3"
+};
+const ADMIN_EMAIL = "admin@movement-planner.app"; // typing "admin" on the sign-in screen uses this account
+
+let auth=null, unsubs=[];
+async function initFirebase(){
+  const load = src => new Promise((res,rej) => { const s=document.createElement("script"); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+  const V="https://www.gstatic.com/firebasejs/10.12.2/";
+  await load(V+"firebase-app-compat.js");
+  await Promise.all([load(V+"firebase-auth-compat.js"), load(V+"firebase-firestore-compat.js")]);
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const fs=firebase.firestore();
+  db={ collection:c=>fs.collection(c), doc:p=>fs.doc(p) };
+  const a=firebase.auth(); await a.setPersistence(firebase.auth.Auth.Persistence.LOCAL); return a;
+}
+const normEmail = s => { s=(s||"").trim().toLowerCase(); return s==="admin" ? ADMIN_EMAIL.toLowerCase() : s; };
+function loginShell(inner){
+  return `<section class="panel login" aria-labelledby="login-h">
+    <div class="row-top" style="align-items:center">
+      <div class="brand"><div class="brand-mark" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="4" cy="15" r="2.4" fill="#fff"/><circle cx="16" cy="5" r="2.4" fill="#fff"/><path d="M4 15 C 6 6, 12 12, 16 5" stroke="#fff" stroke-width="1.8" fill="none" stroke-dasharray="2.4 2"/></svg></div>
+        <div><h1 id="login-h">${esc(t("appName"))}</h1><p class="muted small" style="margin:0">${esc(t("appSub"))}</p></div></div>
+      <div class="lang" role="group" aria-label="Language"><button type="button" data-act="set-lang" data-l="en" aria-pressed="${lang==="en"}">EN</button><button type="button" data-act="set-lang" data-l="ar" aria-pressed="${lang==="ar"}">عربي</button></div>
+    </div>${inner}</section>`;
+}
+let loginMsg=null, loginBusy=false;
+function renderLogin(errMsg){
+  if(errMsg!==undefined) loginMsg=errMsg;
+  if(!FIREBASE_CONFIG){ $("#login").innerHTML=loginShell(`<h2 style="font-size:17px">${esc(t("setupTitle"))}</h2><p class="lede">${esc(t("setupBody"))}</p>`); return; }
+  const em=$("#l-email")?.value||"";
+  $("#login").innerHTML=loginShell(`
+    <h2 style="font-size:17px">${esc(t("loginTitle"))}</h2>
+    <p class="lede">${esc(t("loginLede"))}</p>
+    <form id="login-form" style="display:flex;flex-direction:column;gap:12px">
+      <div class="field"><label for="l-email">${esc(t("emailLbl"))}</label><input id="l-email" type="text" inputmode="email" autocomplete="username" autocapitalize="off" spellcheck="false" dir="ltr" value="${esc(em)}" required></div>
+      <div class="field"><label for="l-pass">${esc(t("password"))}</label><input type="password" id="l-pass" autocomplete="current-password" dir="ltr" required></div>
+      ${loginMsg?`<div class="alert ${loginMsg.ok?"seat":"warn"}">${esc(loginMsg.text||loginMsg)}</div>`:""}
+      <button class="btn primary" type="submit" style="justify-content:center"${loginBusy?" disabled":""}>${esc(loginBusy?t("signingIn"):t("signIn"))}</button>
+      <button class="btn ghost small" type="button" data-act="forgot" style="align-self:center">${esc(t("forgot"))}</button>
+    </form>`);
+}
+function authErr(e){
+  const c=(e&&e.code)||"";
+  if(/too-many-requests/.test(c)) return t("tooMany");
+  if(/network/.test(c)) return t("netErr");
+  return t("badLogin");
+}
+function showApp(){ $("#login").hidden = true; $("#app").hidden = false; renderActing(); render(); }
+function showLogin(err){ closeOverlay(); $("#app").hidden = true; $("#login").hidden = false; renderLogin(err); }
+async function doLogin(email,pw){
+  loginBusy=true; renderLogin(null);
+  try{ await auth.signInWithEmailAndPassword(normEmail(email),pw); }
+  catch(e){ loginBusy=false; showLogin(authErr(e)); }
+}
+async function forgotPw(){
+  const em=normEmail($("#l-email")?.value); if(!em){ renderLogin(t("needEmail")); return; }
+  try{ await auth.sendPasswordResetEmail(em); }catch(e){}
+  renderLogin({ok:true,text:t("resetSent")});
+}
+function logout(){ S.notifyOpen=false; S.notifiedFor=null; renderNotify(); if(auth) auth.signOut(); }
+function stopData(){ unsubs.forEach(f=>{ try{f();}catch(e){} }); unsubs=[]; [S.trips,S.requests,S.needs,S.agencies].forEach(m=>m.clear()); }
+async function onUser(u){
+  stopData(); loginBusy=false;
+  if(!u){ S.user=null; S.email=null; S.admin=false; S.myAgency=""; showLogin(null); return; }
+  const email=(u.email||"").toLowerCase();
+  S.admin = email===ADMIN_EMAIL.toLowerCase();
+  let agency="";
+  if(!S.admin){
+    try{ const d=await db.doc("users/"+email).get(); agency=d.exists?(d.data().agency||""):""; }catch(e){ console.error(e); }
+    if(!agency){ await auth.signOut(); showLogin(t("noAgencyLink")); return; }
+  }
+  S.email=email; S.user = S.admin ? "admin" : agency; S.myAgency=agency; S.ready=false; S.dbOk=true;
+  showApp(); subscribe();
+}
+function subscribe(){
+  const pending=new Set(["trips","requests","needs","agencies"]);
+  const done=n=>{ if(pending.delete(n) && !pending.size){ S.ready=true; maybeNotify(); } schedule(); };
+  const onErr=e=>{ console.error(e); S.dbOk=false; S.ready=true; schedule(); };
+  const sub=(name,map,fix)=>unsubs.push(db.collection(name).onSnapshot(snap=>{ map.clear(); snap.docs.forEach(d=>{ const x={id:d.id,...d.data()}; map.set(d.id, fix?fix(x):x); }); done(name); }, onErr));
+  sub("trips",S.trips); sub("requests",S.requests); sub("needs",S.needs); sub("agencies",S.agencies,x=>({...x,code:x.code||x.id}));
+  unsubs.push(db.doc("meta/places").onSnapshot(s=>{ S.places=(s.exists&&s.data().places)||{}; applyPlaces(S.places); schedule(); }, e=>console.error(e)));
+  unsubs.push(db.doc("meta/directory").onSnapshot(s=>{ S.prospects=(s.exists&&s.data().prospects)||[]; schedule(); }, e=>console.error(e)));
+}
+document.addEventListener("submit", ev => { if(ev.target.id === "login-form"){ ev.preventDefault(); doLogin($("#l-email").value, $("#l-pass").value); } });
+document.addEventListener("click", ev => { if(ev.target.closest('[data-act="forgot"]')) forgotPw(); });
+document.addEventListener("click", ev => { const b = ev.target.closest('[data-act="set-lang"]'); if(!b) return; lang = b.dataset.l; try{ localStorage.setItem("mp-lang", lang); }catch(e){} applyLang(); if(S.user){ renderActing(); render(); } else renderLogin(); });
+
+document.addEventListener("click",ev=>{ const b=ev.target.closest("[data-mview]"); if(!b) return; S.mapView=b.dataset.mview; render(); });
+const BP_SEL=".panel,.btn.primary:not(.small),.brand-mark";
+function decorate(){ document.querySelectorAll(BP_SEL).forEach(el=>{ if(el.classList.contains("blueprint")) return; el.classList.add("blueprint"); el.insertAdjacentHTML("beforeend",'<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>'); }); }
+new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+applyLang();
+let rerenderQ = null;
+function schedule(){
+  if(rerenderQ) return;
+  rerenderQ = requestAnimationFrame(() => {
+    rerenderQ = null;
+    if(!S.user){ if(!$("#login").hidden) renderLogin(); return; }
+    renderActing();
+    if(!document.activeElement || !document.activeElement.matches("#reg-q")) render(); else renderTabs();
+    if(overlayState?.kind === "detail") tripDetail(overlayState.id);
+    if(overlayState?.kind === "trip-form") updateTripFormHelpers();
+  });
+}
+(async function boot(){
+  $("#login").hidden=false; $("#login").innerHTML=loginShell(`<p class="lede">${esc(t("loading"))}</p>`);
+  if(!FIREBASE_CONFIG){ renderLogin(); return; }
+  try{ auth=await initFirebase(); }catch(e){ console.error(e); renderLogin(t("netErr")); return; }
+  auth.onAuthStateChanged(onUser);
+})();
+})();
+</script>
+
+</body>
+</html>

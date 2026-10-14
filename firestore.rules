@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function email() { return request.auth.token.email.lower(); }
+    function isAdmin() { return signedIn() && email() == 'admin@movement-planner.app'; }
+    function isMember() { return signedIn() && exists(/databases/$(database)/documents/users/$(email())); }
+    function myAgency() { return get(/databases/$(database)/documents/users/$(email())).data.agency; }
+
+    // email -> organisation link (managed by admin in the Admin tab)
+    match /users/{e} {
+      allow read: if isAdmin() || (signedIn() && email() == e);
+      allow write: if isAdmin();
+    }
+    // organisations: admin creates/deletes; each organisation can edit its own card (not its sign-in emails)
+    match /agencies/{code} {
+      allow read: if isAdmin() || isMember();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (isMember() && myAgency() == code
+        && request.resource.data.get('emails', []) == resource.data.get('emails', []));
+    }
+    // map locations etc.
+    match /meta/{doc} {
+      allow read: if isAdmin() || isMember();
+      allow write: if isAdmin();
+    }
+    match /trips/{id}    { allow read, write: if isAdmin() || isMember(); }
+    match /requests/{id} { allow read, write: if isAdmin() || isMember(); }
+    match /needs/{id}    { allow read, write: if isAdmin() || isMember(); }
+  }
+}
